@@ -74,9 +74,9 @@ window.FERIA_DATA = {
    * Datos del afiche oficial. Dejar "" lo que no aplique; no se mostrará.
    */
   coronacion: {
-    fecha: "Sábado 03 de octubre",
+    fecha: "Domingo 04 de octubre",
     lugar: "Salón de la Comunidad",
-    hora: "A partir de 7:30 PM",
+    hora: "A partir de 7:00 PM",
     entrada: "Entrada Q20.00",
     baile: {
       antes: "Después",
