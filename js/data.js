@@ -85,7 +85,7 @@ window.FERIA_DATA = {
       grupo: "Discovery Móvil Disco",
       logo: "assets/img/baile/discovery-movil-disco.webp"
     },
-    afiche: "assets/img/flores/afiche-coronacion.jpg",
+    afiche: "assets/img/flores/afiche-coronacion.jpg?v=2",
     aficheAlt: "Afiche de la presentación y coronación de candidatas a Flor de la Feria Barranco Colorado 2026"
   },
 
