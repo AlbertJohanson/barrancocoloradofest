@@ -109,13 +109,13 @@ El sitio no muestra esta hora como oficial. En la portada solo aparece "Inicia e
 | Valor | Efecto | Dónde se usa |
 |---|---|---|
 | *(vacío)* | Sube y aparece | Título, datos del evento, textos |
-| `pop` | Crece con rebote | Logo de Flor de la Feria, logo de Discovery, botón "Ver afiche", logos de patrocinadores |
-| `escribir` | Se descubre de izquierda a derecha | "de candidatas a Flor de la Feria", "Señoritas representantes…" |
+| `pop` | Crece con rebote | Logo de Flor de la Feria, logos de patrocinadores |
+| `escribir` | Se descubre de izquierda a derecha | "Nuestras reinas", "Señoritas representantes…", títulos bajo las coronas |
 | `desplegar` | Se despliega como una cinta | Cinta "Barranco Colorado" |
-| `columpio` | Baja balanceándose | Cinta "Gran baile" |
-| `voltear` | Se levanta girando en 3D | Panel del evento, tarjetas de candidatas |
+| `columpio` | Baja balanceándose | Coronas de las reinas |
+| `voltear` | Se levanta girando en 3D | Tarjetas de candidatas y reinas |
 
-Además, los íconos del evento rebotan al aparecer. En cada tarjeta, la banda "Candidata" se despliega, un destello dorado cruza la foto y luego aparece el nombre.
+En cada tarjeta, la banda "Candidata" se despliega, un destello dorado cruza la foto y luego aparece el nombre. En las reinas, la corona baja balanceándose y brilla una vez, luego se escribe su título y se levanta la tarjeta. Todas las animaciones ocurren una sola vez, sin bucle.
 
 - Con "reducir movimiento" activado, todo se ve de forma normal, sin efectos.
 - La intensidad del oscurecido y del alejamiento de la portada se ajusta en `actualizar()` de `escenas.js`.
@@ -161,10 +161,8 @@ noticias: [
 
 El diseño toma como base el afiche de coronación: un escenario de noche con reflectores, en fucsia y dorado.
 
-- **Logo:** `assets/img/flores/logo-flor-de-la-feria.webp` (emblema "Flor de la Feria, Barranco Colorado 2026" con corona y flores, fondo transparente, 720 × 720). El original está en PNG con el mismo nombre.
-- **Afiche completo:** `assets/img/flores/afiche-coronacion.jpg`. Se abre con el botón "Ver afiche".
-- **Datos del evento:** están en `coronacion` en `data.js`: fecha, lugar, hora, entrada, baile y afiche. Lo que se deje en `""` no se muestra.
-- **Gran baile:** dentro del panel del evento hay una pista con reflectores de colores, un ecualizador (fijo) y el logo de Discovery Móvil Disco (`assets/img/baile/`). Debajo está el botón "Ver afiche". Los textos y el logo están en `coronacion.baile` en `data.js`. Si el logo no carga, se muestra el nombre del grupo en texto.
+- **Encabezado:** el logo `assets/img/flores/logo-flor-de-la-feria.webp` (720 × 720, fondo transparente; original en PNG) y el título "Nuestras reinas" (en `index.html`). El panel con los datos de la coronación y el gran baile se quitó tras la coronación.
+- **Reinas:** una candidata con `corona` (ej. `corona: "Flor de la Feria"`) lleva una corona dorada y ese título sobre su tarjeta, en lugar de la banda. Todas las coronadas se ven igual.
 - **Agradecimiento:** al final de la sección hay una franja como la del afiche, con el escudo de la Municipalidad de San Jorge y el texto "Con el apoyo de El alcalde David Trujillo y la Municipalidad de San Jorge". Se edita en `agradecimiento` en `data.js`. El escudo sin fondo está en `assets/img/municipalidad/escudo-san-jorge.webp` (también en PNG) y el original en `logo-original.jpg`.
 - **Sin candidatas:** se muestra la silueta de la reina (`silueta-reina.webp`) con el texto "Pronto conocerás a las candidatas…". Esa silueta también sustituye la foto de una candidata que no tenga foto.
 
@@ -252,6 +250,12 @@ ubicacion: { lat: 14.9236932, lng: -89.5971415, zoom: 14 }
 Se usan coordenadas porque hay otro "Barranco Colorado" en Teculután. Para apuntar a la iglesia o al campo de la feria, en Google Maps haz clic derecho en el punto y copia las coordenadas. Si se borran, el mapa no se muestra.
 
 El crédito "Hecho con ♥ por AJ Trujillo Dev" enlaza a https://albertrujillo.dev/ (logo en `assets/img/credito/trujillo-dev.webp`).
+
+## Enlace directo, vista previa al compartir e ícono
+
+- **Enlace directo a las reinas:** https://barrancocoloradofest.com/#reinas abre la página directamente en la sección. `#reinas` no es un id: el salto lo hace `initEnlaceDirecto()` en `main.js` (las secciones fijas de `escenas.js` confunden el salto nativo). Para agregar otro enlace, añade una entrada a `ENLACES`.
+- **Vista previa al compartir:** etiquetas Open Graph y Twitter en el `<head>` de `index.html`, con la imagen `assets/img/compartir/reinas-2026.jpg` (1200 × 630). Las URL deben ser absolutas. Si cambias la imagen, usa otro nombre de archivo: Facebook y WhatsApp guardan la anterior en caché (en Facebook se puede refrescar con el Sharing Debugger).
+- **Ícono de la pestaña:** `assets/img/icono/` (32, 48 y 180 px para iPhone), hechos a partir de `assets/img/logo/logo.png`.
 
 ## Antes de publicar
 

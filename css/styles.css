@@ -787,7 +787,7 @@ a {
 }
 .flores-stage__beam--3 { right: 0; transform: rotate(22deg); }
 
-/* ---------- Encabezado con el logo ---------- */
+/* ---------- Encabezado: logo y "Nuestras reinas" ---------- */
 .flores-header {
   display: flex;
   flex-direction: column;
@@ -811,12 +811,6 @@ a {
   line-height: 1.05;
 }
 
-.flores-header__kicker {
-  font-size: clamp(1.6rem, 6.5vw, 2.75rem);
-  text-transform: uppercase;
-  text-shadow: 0 3px 0 #5B0A3A, 0 0 18px rgba(255, 46, 154, 0.5);
-}
-
 .flores-header__script {
   padding-inline: 0.2em; /* la letra cursiva sobresale: así no se corta el degradado */
   margin-top: 0.35rem;
@@ -825,214 +819,8 @@ a {
           background-clip: text;
   color: transparent;
   font-family: var(--font-script);
-  font-size: clamp(1.5rem, 6vw, 2.5rem);
+  font-size: clamp(2.4rem, 1.6rem + 4vw, 4rem);
   filter: drop-shadow(0 2px 0 #5B0A3A);
-}
-
-/* Cinta fucsia, como "BARRANCO COLORADO" en el afiche */
-.flores-header__ribbon {
-  position: relative;
-  margin-top: 1rem;
-  padding: 0.35rem 2rem;
-  background: linear-gradient(180deg, var(--rosa), var(--fucsia) 55%, #A8005A);
-  clip-path: polygon(0 0, 100% 0, calc(100% - 14px) 50%, 100% 100%, 0 100%, 14px 50%);
-  color: #FFF;
-  font-family: var(--font-display);
-  font-size: clamp(1rem, 4vw, 1.35rem);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-/* ---------- Datos de la coronación ---------- */
-.coronacion {
-  max-width: 880px;
-  margin: 0 auto 3rem;
-  padding: 1.5rem var(--gutter);
-  border: 1px solid rgba(255, 201, 60, 0.45);
-  border-radius: var(--radius);
-  background: rgba(18, 6, 28, 0.7);
-  box-shadow: 0 0 0 4px rgba(255, 201, 60, 0.08), 0 20px 50px rgba(0, 0, 0, 0.4);
-  text-align: center;
-}
-
-.coronacion__info {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.25rem 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.coronacion__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.4rem;
-  padding-inline: 0.5rem;
-  font-family: var(--font-display);
-  font-size: 1.05rem;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-/* Separadores fucsia entre datos */
-.coronacion__item:nth-child(even) {
-  border-left: 2px solid var(--fucsia);
-}
-
-.coronacion__icon {
-  width: 34px;
-  height: 34px;
-  fill: none;
-  stroke: var(--oro);
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* ---------- Gran baile: pista con luces de fiesta ---------- */
-.baile {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  max-width: 640px;
-  margin: 1.75rem auto 0;
-  padding: 1.5rem 1rem 1.75rem;
-  border: 1px solid rgba(255, 46, 154, 0.45);
-  border-radius: var(--radius);
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 115%, rgba(255, 46, 154, 0.4), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 50% -10%, rgba(120, 60, 255, 0.35), transparent 70%),
-    #0B0414;
-  box-shadow: inset 0 0 40px rgba(255, 46, 154, 0.15), 0 0 30px rgba(255, 46, 154, 0.15);
-}
-
-/* Reflectores de colores sobre la pista (fijos) */
-.baile__luces span {
-  position: absolute;
-  z-index: -1;
-  top: -30%;
-  width: 26%;
-  height: 160%;
-  opacity: 0.4;
-  clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
-  transform-origin: 50% 0;
-}
-
-.baile__luces span:nth-child(1) { left: 2%;  background: linear-gradient(180deg, #00E5FF, transparent 80%); transform: rotate(-18deg); }
-.baile__luces span:nth-child(2) { left: 26%; background: linear-gradient(180deg, #FF2E9A, transparent 80%); transform: rotate(-6deg); }
-.baile__luces span:nth-child(3) { left: 50%; background: linear-gradient(180deg, #8A5BFF, transparent 80%); transform: rotate(6deg); }
-.baile__luces span:nth-child(4) { left: 72%; background: linear-gradient(180deg, #FFD600, transparent 80%); transform: rotate(18deg); }
-
-.baile__antes {
-  color: var(--oro);
-  font-family: var(--font-script);
-  font-size: 1.35rem;
-  line-height: 1.2;
-}
-
-/* "Gran baile" en una cinta fucsia, como en el afiche */
-.baile__titulo {
-  display: inline-block;
-  margin-top: 0.15rem;
-  padding: 0.05em 0.7em 0.15em;
-  border-radius: 8px;
-  background: linear-gradient(180deg, var(--rosa), var(--fucsia) 60%, #A8005A);
-  box-shadow: 0 6px 18px rgba(255, 46, 154, 0.45);
-  color: #FFF;
-  font-family: var(--font-script);
-  font-size: clamp(2rem, 1.4rem + 3vw, 3rem);
-  line-height: 1.25;
-  text-shadow: 0 2px 0 #7A0042;
-  transform: rotate(-3deg);
-}
-
-.baile__por {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-top: 1rem;
-  color: #FFF;
-  font-family: var(--font-display);
-  font-size: 1rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-}
-
-/* Ecualizador (fijo) a los lados de "Amenizado por" */
-.baile__eq {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 3px;
-  height: 20px;
-}
-
-.baile__eq i {
-  width: 4px;
-  height: 100%;
-  border-radius: 2px;
-  background: linear-gradient(0deg, #00E5FF, var(--rosa));
-  transform-origin: 50% 100%;
-  transform: scaleY(0.45);
-}
-
-.baile__eq i:nth-child(2) { transform: scaleY(0.8); }
-.baile__eq i:nth-child(3) { transform: scaleY(1); }
-.baile__eq i:nth-child(4) { transform: scaleY(0.6); }
-.baile__eq i:nth-child(5) { transform: scaleY(0.3); }
-
-.baile__grupo {
-  position: relative;
-  margin-top: 1.1rem;
-}
-
-/* Halo detrás del logo */
-.baile__grupo::before {
-  content: "";
-  position: absolute;
-  inset: -20% 10%;
-  z-index: -1;
-  background: radial-gradient(ellipse at 50% 50%, rgba(255, 40, 40, 0.45), transparent 65%);
-  opacity: 0.8;
-}
-
-.baile__logo {
-  display: block;
-  width: min(100%, 460px);
-  height: auto;
-  margin-inline: auto;
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-}
-
-.baile__grupo-texto {
-  color: #FFF;
-  font-family: var(--font-display);
-  font-size: clamp(1.6rem, 1.2rem + 2vw, 2.2rem);
-  text-transform: uppercase;
-}
-
-.coronacion__afiche {
-  margin-top: 1.5rem;
-}
-
-.btn--flor {
-  border: 2px solid var(--oro-claro);
-  background: linear-gradient(180deg, var(--oro-claro) 0%, var(--oro) 45%, var(--oro-oscuro) 100%);
-  color: var(--noche);
-  font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 400;
-  box-shadow: 0 0 22px rgba(255, 201, 60, 0.35);
-}
-
-.btn--flor:hover { transform: translateY(-2px); }
-.btn--flor:focus-visible { outline-color: var(--oro-claro); }
-
-@media (min-width: 720px) {
-  .coronacion__info { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .coronacion__item + .coronacion__item { border-left: 2px solid var(--fucsia); }
 }
 
 /* ---------- Candidatas ---------- */
@@ -1156,6 +944,52 @@ a {
   margin-top: 0.5rem;
   color: #E9D7E4;
   font-size: 0.95rem;
+}
+
+/* ---------- Ya coronadas ----------
+ * Corona y título sobre la tarjeta; todas iguales.
+ */
+.flor-coronada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.flor-coronada > .flor-card {
+  align-self: stretch;
+  flex: 1;
+}
+
+.flor-coronada__corona {
+  display: block;
+  width: 88px;
+}
+
+.flor-coronada__corona svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 12px rgba(255, 201, 60, 0.5));
+}
+
+/* Siempre dos líneas de alto, para que las tres tarjetas queden alineadas */
+.flor-coronada__titulo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 2.3em;
+  margin: 0.35rem 0 1rem;
+  text-wrap: balance;
+  padding-inline: 0.2em;
+  background: linear-gradient(180deg, var(--oro-claro) 10%, var(--oro) 50%, #FF9E1B 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  font-family: var(--font-script);
+  font-size: clamp(1.5rem, 1.1rem + 1.4vw, 1.9rem);
+  line-height: 1.15;
+  filter: drop-shadow(0 2px 0 #5B0A3A);
 }
 
 /* Sin candidatas publicadas: silueta de la reina */
@@ -1871,21 +1705,6 @@ main {
   clip-path: inset(-30% -10% -30% -10%);
 }
 
-.baile__titulo {
-  --revelado: rotate(-3deg);
-}
-
-/* Íconos del evento: rebotan al llegar */
-.escenas .coronacion__item.is-revelado .coronacion__icon {
-  animation: rebotar-icono 0.7s calc(var(--i, 0) * 120ms + 0.35s) both;
-}
-
-@keyframes rebotar-icono {
-  0%   { scale: 0; }
-  60%  { scale: 1.3; }
-  100% { scale: 1; }
-}
-
 /* Tarjetas: la banda se despliega y un destello cruza la foto */
 .escenas .flor-card .flor-card__sash {
   scale: 0 1;
@@ -1924,6 +1743,17 @@ main {
 
 @keyframes destello-foto {
   to { transform: translateX(120%); }
+}
+
+/* Corona: al terminar de bajar, un destello la recorre una sola vez */
+.escenas .flor-coronada__corona.is-revelado svg {
+  animation: corona-destello 0.9s ease calc(var(--i, 0) * 120ms + 0.6s) both;
+}
+
+@keyframes corona-destello {
+  0%   { filter: drop-shadow(0 0 12px rgba(255, 201, 60, 0.5)); }
+  50%  { filter: drop-shadow(0 0 22px rgba(255, 233, 163, 1)) brightness(1.3); }
+  100% { filter: drop-shadow(0 0 12px rgba(255, 201, 60, 0.5)); }
 }
 
 /* ---------- Movimiento reducido ---------- */

@@ -306,93 +306,6 @@
   }
 
   /* =========================================================
-   * Flores de la Feria: datos de la coronación
-   * ======================================================= */
-
-  // Íconos fijos (no vienen de data.js), como los del afiche
-  var ICONOS = {
-    fecha: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/>',
-    lugar: '<path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
-    hora: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
-    entrada: '<path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M15 7v10" stroke-dasharray="2 2"/>'
-  };
-
-  function createIcon(name) {
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.setAttribute("viewBox", "0 0 24 24");
-    svg.setAttribute("aria-hidden", "true");
-    svg.setAttribute("class", "coronacion__icon");
-    svg.innerHTML = ICONOS[name];
-    return svg;
-  }
-
-  /**
-   * Gran baile: textos, y el logo del grupo. Si el logo no carga,
-   * se muestra el nombre del grupo en texto.
-   */
-  function renderBaile(baile, box) {
-    var node = $("[data-baile]", box);
-    if (!node || !baile || !hasText(baile.grupo)) return false;
-
-    node.querySelectorAll("[data-baile-campo]").forEach(function (campo) {
-      var value = baile[campo.getAttribute("data-baile-campo")];
-      if (hasText(value)) campo.textContent = value;
-      else if (campo.getAttribute("data-baile-campo") !== "grupo") campo.remove();
-    });
-
-    var logo = $("[data-baile-logo]", node);
-    var texto = $(".baile__grupo-texto", node);
-    function sinLogo() {
-      logo.remove();
-      texto.hidden = false;
-    }
-    if (hasText(baile.logo)) {
-      logo.alt = baile.grupo;
-      texto.hidden = true; // el logo (con su alt) ya dice el nombre
-      logo.addEventListener("error", sinLogo, { once: true });
-      logo.src = baile.logo;
-    } else {
-      sinLogo();
-    }
-
-    node.hidden = false;
-    return true;
-  }
-
-  function renderCoronacion() {
-    var data = DATA.coronacion || {};
-    var box = $("[data-coronacion-box]");
-    if (!box) return;
-    var visible = false;
-
-    var info = $("[data-coronacion-info]", box);
-    ["fecha", "lugar", "hora", "entrada"].forEach(function (key) {
-      if (!hasText(data[key])) return;
-      var li = el("li", "coronacion__item");
-      li.setAttribute("data-revelar", "");
-      li.style.setProperty("--i", info.children.length + 1);
-      li.appendChild(createIcon(key));
-      li.appendChild(el("span", "coronacion__text", data[key]));
-      info.appendChild(li);
-      visible = true;
-    });
-    info.hidden = !info.children.length;
-
-    if (renderBaile(data.baile, box)) visible = true;
-
-    if (hasText(data.afiche)) {
-      var button = $("[data-coronacion-afiche]", box);
-      button.hidden = false;
-      button.addEventListener("click", function () {
-        openViewer(data.afiche, data.aficheAlt || "", "Flor de la Feria 2026", button);
-      });
-      visible = true;
-    }
-
-    box.hidden = !visible;
-  }
-
-  /* =========================================================
    * Flores de la Feria: agradecimiento a la municipalidad
    * ======================================================= */
 
@@ -425,6 +338,19 @@
    * ======================================================= */
 
   var SILUETA = "assets/img/flores/silueta-reina.webp";
+
+  // Corona dorada con joyas fucsia (decorativa), para las ya coronadas
+  var CORONA_SVG =
+    '<svg viewBox="0 0 120 80" aria-hidden="true" focusable="false">' +
+      '<defs><linearGradient id="corona-oro" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0" stop-color="#FFE9A3"/><stop offset=".5" stop-color="#FFC93C"/><stop offset="1" stop-color="#C98A0B"/>' +
+      '</linearGradient></defs>' +
+      '<path d="M10 66 4 22l28 22L60 6l28 38 28-22-6 44Z" fill="url(#corona-oro)" stroke="#8A5A00" stroke-width="2" stroke-linejoin="round"/>' +
+      '<rect x="10" y="62" width="100" height="12" rx="3" fill="url(#corona-oro)" stroke="#8A5A00" stroke-width="2"/>' +
+      '<circle cx="4" cy="20" r="5" fill="#FF2E9A"/><circle cx="60" cy="6" r="6" fill="#FF2E9A"/><circle cx="116" cy="20" r="5" fill="#FF2E9A"/>' +
+      '<circle cx="35" cy="68" r="3.5" fill="#E6007E"/><circle cx="60" cy="68" r="4" fill="#00BCEB"/><circle cx="85" cy="68" r="3.5" fill="#E6007E"/>' +
+      '<path d="M60 30 66 44 60 56 54 44Z" fill="#FF2E9A" stroke="#FFE9A3" stroke-width="1.5"/>' +
+    '</svg>';
 
   function createFlorCard(item, index) {
     var card = el("article", "flor-card");
@@ -468,7 +394,22 @@
     body.appendChild(el("h4", "flor-card__name", item.nombre));
     if (hasText(item.descripcion)) body.appendChild(el("p", "flor-card__text", item.descripcion));
     card.appendChild(body);
-    return card;
+    if (!hasText(item.corona)) return card;
+
+    // Ya coronada: corona y título encima de la tarjeta
+    var wrap = el("div", "flor-coronada");
+    var corona = el("span", "flor-coronada__corona");
+    corona.setAttribute("data-revelar", "columpio");
+    corona.style.setProperty("--i", index);
+    corona.innerHTML = CORONA_SVG;
+    var titulo = el("p", "flor-coronada__titulo", item.corona);
+    titulo.setAttribute("data-revelar", "escribir");
+    titulo.style.setProperty("--i", index + 1);
+    card.style.setProperty("--i", index + 2);
+    wrap.appendChild(corona);
+    wrap.appendChild(titulo);
+    wrap.appendChild(card);
+    return wrap;
   }
 
   /** Un título y una cuadrícula por grupo; los grupos sin candidatas no se muestran. */
@@ -679,6 +620,38 @@
   }
 
   /* =========================================================
+   * Enlace directo a una sección: barrancocoloradofest.com/#reinas
+   * Las secciones quedan fijas al desplazarse (js/escenas.js) y el
+   * salto nativo del navegador no cae bien, así que se calcula aquí.
+   * "#reinas" no es un id: el navegador no salta por su cuenta.
+   * ======================================================= */
+
+  var ENLACES = { "#reinas": "flores" };
+
+  function initEnlaceDirecto() {
+    var id = ENLACES[decodeURIComponent(location.hash).toLowerCase()];
+    var section = id && document.getElementById(id);
+    if (!section || section.hidden) return;
+
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+    var destino = 0;
+    function ir() {
+      destino = Math.round(section.getBoundingClientRect().top + window.scrollY);
+      window.scrollTo({ top: destino, behavior: "instant" }); // sin el desplazamiento suave del CSS
+    }
+    ir();
+
+    // Fotos y tipografías pueden mover la sección: se corrige al terminar
+    // de cargar, salvo que la persona ya se haya desplazado
+    window.addEventListener("load", function () {
+      var listo = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+      listo.then(function () {
+        if (Math.abs(window.scrollY - destino) < 4) ir();
+      });
+    }, { once: true });
+  }
+
+  /* =========================================================
    * Inicio
    * ======================================================= */
 
@@ -690,13 +663,13 @@
     initViewer();
     applySectionVisibility();
     renderNoticias();
-    renderCoronacion();
     renderApoyo();
     renderFlores();
     renderPatrocinadores();
     renderPatrocinar();
     renderMapa();
     renderFooter();
+    initEnlaceDirecto();
   }
 
   init();

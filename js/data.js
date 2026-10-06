@@ -70,25 +70,6 @@ window.FERIA_DATA = {
    */
   noticias: [],
 
-  /* ---------- Coronación de Flor de la Feria ----------
-   * Datos del afiche oficial. Dejar "" lo que no aplique; no se mostrará.
-   */
-  coronacion: {
-    fecha: "Domingo 04 de octubre",
-    lugar: "Salón de la Comunidad",
-    hora: "A partir de 7:00 PM",
-    entrada: "Entrada Q20.00",
-    baile: {
-      antes: "Después",
-      titulo: "Gran baile",
-      amenizaPor: "Amenizado por",
-      grupo: "Discovery Móvil Disco",
-      logo: "assets/img/baile/discovery-movil-disco.webp"
-    },
-    afiche: "assets/img/flores/afiche-coronacion.jpg?v=2",
-    aficheAlt: "Afiche de la presentación y coronación de candidatas a Flor de la Feria Barranco Colorado 2026"
-  },
-
   /* ---------- Agradecimiento (al pie de la sección de las Flores) ----------
    * Se muestra como en el afiche: escudo + "Con el apoyo de…".
    * Dejar "" lo que no aplique; si no hay nombre ni lugar, no se muestra.
@@ -116,55 +97,57 @@ window.FERIA_DATA = {
    * Campos: nombre, grupo ("senoritas" o "ninas"),
    *         titulo (va en la banda, ej. "Candidata"),
    *         descripcion (opcional), foto, alt,
-   *         encuadre (opcional, ej. "50% 20%"), publicado
+   *         encuadre (opcional, ej. "50% 20%"), publicado,
+   *         corona (opcional): ya coronada. Su texto es el título que va
+   *         bajo la corona, ej. "Niña San Rafael". Sustituye a la banda.
    */
   flores: [
     {
-      nombre: "Ana Rosa de Paz Súchite",
+      nombre: "Kimberly Damacio Ortíz",
       grupo: "senoritas",
-      titulo: "Candidata",
-      foto: "assets/img/flores/ana-rosa-de-paz-suchite.webp",
-      alt: "Ana Rosa de Paz Súchite, candidata a Flor de la Feria 2026",
+      corona: "Señorita San Rafael",
+      foto: "assets/img/flores/kimberly-damacio-ortiz-senorita-san-rafael.webp",
+      alt: "Kimberly Damacio Ortíz con corona y banda de Señorita San Rafael 2026",
       publicado: true
     },
     {
-      nombre: "Kimberly Damacio Ortíz",
+      nombre: "Ana Rosa de Paz Súchite",
       grupo: "senoritas",
-      titulo: "Candidata",
-      foto: "assets/img/flores/kimberly-damacio-ortiz.webp",
-      alt: "Kimberly Damacio Ortíz, candidata a Flor de la Feria 2026",
+      corona: "Flor de la Feria",
+      foto: "assets/img/flores/ana-rosa-de-paz-suchite-flor-de-la-feria.webp",
+      alt: "Ana Rosa de Paz Súchite con corona y banda de Flor de la Feria 2026",
       publicado: true
     },
     {
       nombre: "Linzeth Fajardo Acevedo",
       grupo: "senoritas",
-      titulo: "Candidata",
-      foto: "assets/img/flores/linzeth-fajardo-acevedo.webp",
-      alt: "Linzeth Fajardo Acevedo, candidata a Flor de la Feria 2026",
+      corona: "Señorita Barranco Colorado",
+      foto: "assets/img/flores/linzeth-fajardo-acevedo-senorita-barranco-colorado.webp",
+      alt: "Linzeth Fajardo Acevedo con corona y banda de Señorita Barranco Colorado 2026",
       publicado: true
     },
     {
       nombre: "Sofía Guadalupe Espino Archila",
       grupo: "ninas",
-      titulo: "Candidata",
-      foto: "assets/img/flores/sofia-guadalupe-espino-archila.webp",
-      alt: "Sofía Guadalupe Espino Archila, niña representante de la belleza 2026",
+      corona: "Niña San Rafael",
+      foto: "assets/img/flores/sofia-guadalupe-espino-archila-nina-san-rafael.webp",
+      alt: "Sofía Guadalupe Espino Archila con corona y banda de Niña San Rafael 2026",
       publicado: true
     },
     {
-      nombre: "Emely Daniela Villagran Pérez",
+      nombre: "Ayelén Alessandra Rosales",
       grupo: "ninas",
-      titulo: "Candidata",
-      foto: "assets/img/flores/emely-daniela-villagran-perez.webp",
-      alt: "Emely Daniela Villagran Pérez, niña representante de la belleza 2026",
+      corona: "Flor de la Feria Infantil",
+      foto: "assets/img/flores/ayelen-alessandra-rosales-flor-infantil.webp",
+      alt: "Ayelén Alessandra Rosales con corona y banda de Flor de la Feria Infantil 2026",
       publicado: true
     },
     {
-      nombre: "Ayelen Alessandra Rosales",
+      nombre: "Emely Daniela Villagrán Pérez",
       grupo: "ninas",
-      titulo: "Candidata",
-      foto: "assets/img/flores/ayelen-alessandra-rosales.webp",
-      alt: "Ayelen Alessandra Rosales, niña representante de la belleza 2026",
+      corona: "Niña Barranco Colorado",
+      foto: "assets/img/flores/emely-daniela-villagran-perez-nina-barranco-colorado.webp",
+      alt: "Emely Daniela Villagrán Pérez con corona y banda de Niña Barranco Colorado 2026",
       publicado: true
     }
   ],
