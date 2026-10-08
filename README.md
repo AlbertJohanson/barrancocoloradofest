@@ -63,7 +63,7 @@ portada: {
 
 ## Botón "Ver actividades"
 
-Está en la portada, pero **todavía no hace nada**, porque la agenda de actividades es parte de una etapa posterior. Para conectarlo, busca `data-accion="actividades"` en `index.html`.
+Lleva a la sección "Lo que se viene" (ver **Actividades** más abajo). Si esa sección está oculta, el botón tampoco se muestra.
 
 ## Presentación con fuegos artificiales
 
@@ -126,10 +126,33 @@ En cada tarjeta, la banda "Candidata" se despliega, un destello dorado cruza la 
 En `data.js`, `secciones` activa o desactiva cada sección sin borrar su contenido:
 
 ```js
-secciones: { noticias: false, flores: true, patrocinadores: true }
+secciones: { evento: true, actividades: true, noticias: false, flores: true, patrocinadores: true }
 ```
 
 Ahora **Noticias está oculta**. El indicador "Desliza" de la portada lleva siempre a la primera sección visible.
+
+## Gran concierto (evento destacado)
+
+Sección después de las actividades, con estilo de fuego tomado del logo del grupo. Todo se edita en `evento` (`data.js`); si falta el logo o la fecha, la sección no se muestra.
+
+- **Grupos:** logo del grupo principal + `pais` (`"mx"` o `"gt"`, muestra bandera y nombre). `invitados`: nombre, país y logo. Si un logo no carga, se muestra el nombre en texto.
+- **Cuenta regresiva propia:** apunta a `fecha` (con `-06:00`). Usa clases distintas a las de la portada (`evento-reloj`) para no heredar la animación de la presentación.
+- **Entradas y puntos de venta:** `entradas` (la de `destacada: true` va en dorado) y `puntosVenta`.
+- **Video:** en bucle, sin controles. Arranca solo cuando llega a la pantalla y se pausa al salir o al quedar cubierto por la sección siguiente. Intenta sonar con audio; si el navegador lo bloquea (la persona aún no ha tocado la página), suena silenciado con el botón dorado "Activar sonido". Tocar el video lo pausa o lo reanuda. Con "reducir movimiento" o ahorro de datos no arranca solo. Archivo: `assets/video/los-cms-promo.mp4` (comprimido a ~8 MB; `preload="none"`).
+- **Cómo llegar:** `ubicacion` (punto exacto del Estadio Comunal) arma los botones de Waze y Google Maps.
+- **Mapa de localidades:** plano interactivo dibujado en SVG desde `localidades` (según el plano del organizador): escenario, bocinas, mesas VIP a ambos lados del pasillo y General 1 / General 2. Tocar una zona o mesa muestra nombre, precio y descripción; los botones de zona sirven también con teclado. `mesasIzquierda` / `mesasDerecha` son las filas de mesas (8 por fila, la primera junto al escenario); `0` = mesa sin número. En teléfonos el plano se desplaza de lado y empieza centrado en el escenario.
+- **Logos:** `assets/img/evento/`. Se recortaron del video promocional (no hay versiones oficiales en internet); conviene reemplazarlos por los originales si el organizador los consigue.
+
+## Actividades: "Lo que se viene"
+
+Adelanto de algunas actividades (no es el programa oficial), en un carrusel que se desliza de lado, justo después de la portada. Mismo estilo que la portada (noche azul, cinta fucsia, dorado), con un aviso de que el programa oficial está en preparación (`aviso`). Se edita en `actividades.lista` (`data.js`).
+
+- Orden automático por `fecha` y `hora`; las de días ya pasados (hora de Guatemala) se ocultan solas. Si no queda ninguna, la sección no se muestra.
+- Con afiche: la tarjeta usa `miniatura` (liviana, recortada con `encuadre`) y al tocarla abre `afiche` completo en el visor.
+- Sin afiche: tarjeta de color con el nombre y "Detalles pronto". Sin hora ni lugar: "Hora y lugar por confirmar".
+- El gran concierto no va en la lista: tiene su propia sección.
+- Afiches en `assets/img/actividades/` (completo ~200–360 KB; miniatura `-mini` ~100 KB).
+- El botón "Ver actividades" de la portada lleva a esta sección (si está oculta, el botón también). Enlace directo: `#actividades`.
 
 ## Noticias
 
@@ -253,8 +276,8 @@ El crédito "Hecho con ♥ por AJ Trujillo Dev" enlaza a https://albertrujillo.d
 
 ## Enlace directo, vista previa al compartir e ícono
 
-- **Enlace directo a las reinas:** https://barrancocoloradofest.com/#reinas abre la página directamente en la sección. `#reinas` no es un id: el salto lo hace `initEnlaceDirecto()` en `main.js` (las secciones fijas de `escenas.js` confunden el salto nativo). Para agregar otro enlace, añade una entrada a `ENLACES`.
-- **Vista previa al compartir:** etiquetas Open Graph y Twitter en el `<head>` de `index.html`, con la imagen `assets/img/compartir/reinas-2026.jpg` (1200 × 630). Las URL deben ser absolutas. Si cambias la imagen, usa otro nombre de archivo: Facebook y WhatsApp guardan la anterior en caché (en Facebook se puede refrescar con el Sharing Debugger).
+- **Enlace directo a las reinas:** https://barrancocoloradofest.com/#reinas abre la página directamente en la sección. Igual para el concierto: https://barrancocoloradofest.com/#concierto (también funciona `#baile`) y para las actividades: https://barrancocoloradofest.com/#actividades. `#reinas` no es un id: el salto lo hace `initEnlaceDirecto()` en `main.js` (las secciones fijas de `escenas.js` confunden el salto nativo). Para agregar otro enlace, añade una entrada a `ENLACES`.
+- **Vista previa al compartir:** etiquetas Open Graph y Twitter en el `<head>` de `index.html`, con la imagen general `assets/img/compartir/feria-2026.jpg` (1200 × 630: logo y fecha de inicio, estilo de la portada). La anterior, `reinas-2026.jpg`, queda guardada por si se quiere volver a usar. Las URL deben ser absolutas. Si cambias la imagen, usa otro nombre de archivo: Facebook y WhatsApp guardan la anterior en caché (en Facebook se puede refrescar con el Sharing Debugger).
 - **Ícono de la pestaña:** `assets/img/icono/` (32, 48 y 180 px para iPhone), hechos a partir de `assets/img/logo/logo.png`.
 
 ## Antes de publicar

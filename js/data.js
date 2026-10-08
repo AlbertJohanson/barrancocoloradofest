@@ -26,6 +26,8 @@ window.FERIA_DATA = {
    * Cambiar a false para ocultar una sección sin borrar su contenido.
    */
   secciones: {
+    evento: true,
+    actividades: true,
     noticias: false,
     flores: true,
     patrocinadores: true
@@ -60,6 +62,165 @@ window.FERIA_DATA = {
     fotos: [
       { ruta: "assets/img/portada/iglesia.webp", encuadre: "50% 40%" },
       { ruta: "assets/img/portada/altar.webp", encuadre: "50% 35%" }
+    ]
+  },
+
+  /* ---------- Evento destacado (sección con cuenta regresiva) ----------
+   * fecha: inicio con el desfase de Guatemala (-06:00); la cuenta
+   *        regresiva apunta a esta hora.
+   * pais: código del país de cada grupo ("mx", "gt"); muestra su bandera.
+   * invitados, entradas y puntosVenta: dejar [] si no aplican.
+   * ubicacion: punto para los botones de Waze y Google Maps.
+   * video: se reproduce solo (en bucle) mientras está en pantalla.
+   */
+  evento: {
+    etiqueta: "Gran concierto de feria",
+    logo: {
+      ruta: "assets/img/evento/los-cms-logo.webp",
+      alt: "Los Meros Meros Los CMS, Caminantes por Siempre",
+      ancho: 1000,
+      alto: 635
+    },
+    pais: "mx",
+    invitadosTexto: "Acompañados de",
+    invitados: [
+      {
+        nombre: "Los Sementales",
+        pais: "gt",
+        logo: { ruta: "assets/img/evento/los-sementales-logo.webp", ancho: 520, alto: 183 }
+      },
+      {
+        nombre: "40 Grados GT",
+        pais: "gt",
+        logo: { ruta: "assets/img/evento/40-grados-gt-logo.webp", ancho: 520, alto: 230 }
+      }
+    ],
+    fecha: "2026-10-24T20:00:00-06:00",
+    fechaTexto: "Sábado 24 de octubre · 8:00\u00a0p.\u00a0m.", // \u00a0: espacio que no se corta
+    mensajeFinal: "¡Hoy es el gran concierto!",
+    lugar: "Estadio Comunal",
+    lugarDetalle: "Aldea Barranco Colorado, San Jorge, Zacapa",
+    // Punto exacto del Estadio Comunal (confirmado por el organizador)
+    ubicacion: { lat: 14.9263488, lng: -89.594772 },
+    entradas: [
+      { nombre: "General", precio: "Q100" },
+      { nombre: "VIP", precio: "Q200", destacada: true }
+    ],
+    puntosVenta: [
+      "Tiendas Belikin, Zacapa",
+      "Centro Comercial El Esfuerzo",
+      "Barranco Colorado, San Jorge"
+    ],
+    video: {
+      ruta: "assets/video/los-cms-promo.mp4",
+      portada: "assets/img/evento/los-cms-video-poster.webp",
+      titulo: "Video promocional del gran concierto con Los CMS"
+    },
+
+    /* Mapa interactivo de localidades (según el plano del organizador).
+     * zonas: lo que se muestra al tocar cada área del mapa.
+     * mesasIzquierda / mesasDerecha: filas de mesas VIP vistas desde el
+     *   público (la primera fila es la más cercana al escenario).
+     *   0 = mesa sin número en el plano.
+     */
+    localidades: {
+      zonas: [
+        { id: "vip", nombre: "VIP", precio: "Q200", descripcion: "Mesas numeradas frente al escenario, a ambos lados del pasillo central." },
+        { id: "general1", nombre: "General 1", precio: "Q100", descripcion: "Área general detrás de las mesas VIP, lado izquierdo." },
+        { id: "general2", nombre: "General 2", precio: "Q100", descripcion: "Área general detrás de las mesas VIP, lado derecho." }
+      ],
+      mesasIzquierda: [
+        [8, 7, 6, 5, 4, 3, 2, 1],
+        [17, 18, 19, 20, 21, 22, 23, 24],
+        [33, 34, 35, 36, 37, 38, 39, 40],
+        [49, 50, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0]
+      ],
+      mesasDerecha: [
+        [9, 10, 11, 12, 13, 14, 15, 16],
+        [25, 26, 27, 28, 29, 30, 31, 32],
+        [41, 42, 43, 44, 45, 46, 47, 48],
+        [0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0]
+      ]
+    }
+  },
+
+  /* ---------- Actividades: adelanto (no es el programa oficial) ----------
+   * Carrusel ordenado por fecha y hora. Las de días pasados se ocultan solas.
+   * Campos: titulo, fecha ("AAAA-MM-DD"), hora ("HH:MM", 24 h; opcional),
+   *   horaTexto (opcional, reemplaza a la hora: ej. "Por la tarde"),
+   *   lugar, descripcion (opcional),
+   *   afiche (imagen completa, se abre al tocar) y miniatura (para la tarjeta),
+   *   alt, encuadre (qué parte del afiche se ve en la tarjeta, ej. "50% 30%"),
+   * Sin afiche se muestra una tarjeta de color con el nombre.
+   * El gran concierto no va aquí: tiene su propia sección.
+   * aviso: mensaje destacado sobre el programa oficial ("" para quitarlo).
+   */
+  actividades: {
+    nota: "Un adelanto de algunas actividades de nuestra feria. Fechas y horarios pueden cambiar.",
+    aviso: "El programa oficial de la feria aún está en preparación. ¡Muy pronto lo compartiremos aquí!",
+    lista: [
+      {
+        titulo: "Desfile de inauguración",
+        fecha: "2026-10-21",
+        hora: "15:30",
+        lugar: "Plaza San Rafael",
+        descripcion: "Bandas rítmicas, nuestras reinas, alegría y mucha diversión.",
+        afiche: "assets/img/actividades/desfile-inauguracion.webp",
+        miniatura: "assets/img/actividades/desfile-inauguracion-mini.webp",
+        alt: "Afiche del desfile de inauguración de la Feria Patronal Barranco Colorado 2026: miércoles 21 de octubre, 3:30 p. m., Plaza San Rafael",
+        encuadre: "50% 45%"
+      },
+      {
+        titulo: "Los Tigres de Oriente",
+        fecha: "2026-10-21",
+        hora: "20:00",
+        lugar: "Plaza San Rafael",
+        afiche: "assets/img/actividades/los-tigres-de-oriente.webp",
+        miniatura: "assets/img/actividades/los-tigres-de-oriente-mini.webp",
+        alt: "Afiche de Los Tigres de Oriente en Barranco Colorado: miércoles 21 de octubre, 8:00 p. m., Plaza San Rafael",
+        encuadre: "50% 55%"
+      },
+      {
+        titulo: "Titanium, la disco móvil",
+        fecha: "2026-10-22",
+        hora: "19:30",
+        lugar: "Salón Social Barranco Colorado",
+        descripcion: "Lluvia de espuma y show de robot.",
+        afiche: "assets/img/actividades/titanium-disco-movil.webp",
+        miniatura: "assets/img/actividades/titanium-disco-movil-mini.webp",
+        alt: "Afiche de Titanium, la disco móvil, con lluvia de espuma y show de robot: jueves 22 de octubre, 7:30 p. m., Salón Social Barranco Colorado",
+        encuadre: "50% 50%"
+      },
+      {
+        titulo: "Tarde infantil",
+        fecha: "2026-10-23",
+        horaTexto: "Por la tarde"
+      },
+      {
+        titulo: "Marimba Orquesta Maya Excelsior",
+        fecha: "2026-10-23",
+        hora: "20:00",
+        afiche: "assets/img/actividades/maya-excelsior.webp",
+        miniatura: "assets/img/actividades/maya-excelsior-mini.webp",
+        alt: "Afiche de la Marimba Orquesta Maya Excelsior, La Preferida: viernes 23 de octubre, 8:00 p. m., Barranco Colorado",
+        encuadre: "30% 50%"
+      },
+      {
+        titulo: "Desfile hípico",
+        fecha: "2026-10-25"
+      },
+      {
+        titulo: "Banda Vega de Luis Vega",
+        fecha: "2026-10-25",
+        hora: "20:00",
+        lugar: "Plaza San Rafael",
+        afiche: "assets/img/actividades/banda-vega.webp",
+        miniatura: "assets/img/actividades/banda-vega-mini.webp",
+        alt: "Afiche del concierto de Banda Vega de Luis Vega: domingo 25 de octubre, 8:00 p. m., Plaza San Rafael",
+        encuadre: "50% 30%"
+      }
     ]
   },
 

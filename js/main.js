@@ -166,32 +166,20 @@
     return n < 10 ? "0" + n : String(n);
   }
 
-  function initCountdown() {
-    var config = DATA.cuentaRegresiva || {};
-    var grid = $("[data-countdown]");
-    var done = $("[data-countdown-done]");
-    var target = new Date(config.fechaObjetivo).getTime();
-    if (!grid || isNaN(target)) {
-      if (grid) grid.closest(".countdown").hidden = true;
-      return;
-    }
-
+  /**
+   * Actualiza los [data-unit] de grid cada segundo hasta llegar a target;
+   * entonces llama a onFinish una sola vez.
+   */
+  function startCountdown(grid, target, onFinish) {
     var nodes = {};
     ["dias", "horas", "minutos", "segundos"].forEach(function (unit) {
       nodes[unit] = grid.querySelector('[data-unit="' + unit + '"]');
     });
 
-    function finish() {
-      grid.hidden = true;
-      $("#titulo-contador").textContent = "¡Llegó el día!";
-      done.textContent = config.mensajeFinal || "¡La feria ha comenzado!";
-      done.classList.add("is-visible");
-    }
-
     function tick() {
       var r = getRemaining(target);
       if (r.total <= 0) {
-        finish();
+        onFinish();
         return; // se detiene: no se programa otra actualización
       }
       nodes.dias.textContent = String(r.dias);
@@ -203,6 +191,598 @@
     }
 
     tick();
+  }
+
+  function initCountdown() {
+    var config = DATA.cuentaRegresiva || {};
+    var grid = $("[data-countdown]");
+    var done = $("[data-countdown-done]");
+    var target = new Date(config.fechaObjetivo).getTime();
+    if (!grid || isNaN(target)) {
+      if (grid) grid.closest(".countdown").hidden = true;
+      return;
+    }
+
+    startCountdown(grid, target, function () {
+      grid.hidden = true;
+      $("#titulo-contador").textContent = "¡Llegó el día!";
+      done.textContent = config.mensajeFinal || "¡La feria ha comenzado!";
+      done.classList.add("is-visible");
+    });
+  }
+
+  /* =========================================================
+   * Evento destacado: gran concierto con cuenta regresiva propia,
+   * grupos (con su país), entradas, video, botones para llegar
+   * (Waze / Google Maps) y mapa interactivo de localidades.
+   * Si falta el logo o la fecha, la sección no se muestra.
+   * ======================================================= */
+
+  // Banderas simplificadas (decorativas: el nombre del país va al lado)
+  var PAISES = {
+    mx: {
+      nombre: "México",
+      bandera: '<svg viewBox="0 0 30 20" width="27" height="18" aria-hidden="true" focusable="false">' +
+        '<rect width="10" height="20" fill="#006847"/><rect x="10" width="10" height="20" fill="#fff"/>' +
+        '<rect x="20" width="10" height="20" fill="#CE1126"/><circle cx="15" cy="10" r="2.8" fill="#8C5A2B"/></svg>'
+    },
+    gt: {
+      nombre: "Guatemala",
+      bandera: '<svg viewBox="0 0 30 20" width="27" height="18" aria-hidden="true" focusable="false">' +
+        '<rect width="10" height="20" fill="#4997D0"/><rect x="10" width="10" height="20" fill="#fff"/>' +
+        '<rect x="20" width="10" height="20" fill="#4997D0"/><circle cx="15" cy="10" r="2.8" fill="#4E8B3A"/></svg>'
+    }
+  };
+
+  /** Rellena node con bandera + nombre del país; devuelve false si el código no existe. */
+  function fillPais(node, codigo) {
+    var pais = PAISES[String(codigo || "").toLowerCase()];
+    if (!pais) return false;
+    var bandera = el("span", "evento-pais__bandera");
+    bandera.innerHTML = pais.bandera; // SVG fijo de este archivo, no viene de data.js
+    node.appendChild(bandera);
+    node.appendChild(el("span", "", pais.nombre));
+    return true;
+  }
+
+  function createInvitado(item, index) {
+    var li = el("li", "evento-invitado");
+    li.setAttribute("data-revelar", "pop");
+    li.style.setProperty("--i", index + 4);
+    var logo = item.logo || {};
+
+    function showName() {
+      li.insertBefore(el("span", "evento-invitado__nombre", item.nombre), li.firstChild);
+    }
+
+    if (hasText(logo.ruta)) {
+      li.appendChild(createImage({
+        src: logo.ruta,
+        alt: item.nombre,
+        width: logo.ancho,
+        height: logo.alto,
+        className: "evento-invitado__logo",
+        lazy: true
+      }, function (failed) { failed.remove(); showName(); }));
+    } else {
+      showName();
+    }
+
+    var pais = el("p", "evento-pais evento-pais--chico");
+    if (fillPais(pais, item.pais)) li.appendChild(pais);
+    return li;
+  }
+
+  /**
+   * Video promocional: en bucle y sin controles.
+   * - Se reproduce solo mientras se ve (y se pausa si sale de pantalla
+   *   o la cubre la sección siguiente), así no gasta datos ni batería.
+   * - Intenta sonar con audio; los navegadores lo bloquean si la persona
+   *   aún no ha tocado la página, y entonces suena silenciado con el
+   *   botón "Activar sonido" a la vista.
+   * - Tocar el video lo pausa o lo reanuda.
+   * - Con "reducir movimiento" o ahorro de datos no arranca solo.
+   */
+  function initVideoPromo(box, player) {
+    var toggle = $("[data-evento-video-toggle]", box);
+    var sonido = $("[data-evento-video-sonido]", box);
+    var sonidoTexto = $("[data-evento-video-sonido-texto]", sonido);
+    var conexion = navigator.connection || {};
+    var automatico = !window.matchMedia("(prefers-reduced-motion: reduce)").matches && !conexion.saveData;
+    var pausadoPorPersona = false;
+    var quiereSonido = true;
+    var enPantalla = false;
+    var escenaTapada = false;
+
+    function actualizarUI() {
+      var pausado = player.paused;
+      box.classList.toggle("is-pausado", pausado);
+      toggle.setAttribute("aria-label", pausado ? "Reproducir video" : "Pausar video");
+      sonidoTexto.textContent = player.muted ? "Activar sonido" : "Silenciar";
+      sonido.classList.toggle("is-silenciado", player.muted);
+      sonido.hidden = pausado && !player.currentTime;
+    }
+
+    function reproducir() {
+      player.preload = "auto";
+      player.muted = !quiereSonido;
+      var intento = player.play();
+      if (!intento || !intento.catch) return;
+      intento.catch(function (error) {
+        if (!error || error.name !== "NotAllowedError" || player.muted) return;
+        // Sin permiso para sonar todavía: arranca silenciado
+        player.muted = true;
+        player.play().catch(function () { actualizarUI(); });
+      });
+    }
+
+    function revisar() {
+      var visible = enPantalla && !escenaTapada;
+      if (visible && automatico && !pausadoPorPersona && player.paused) reproducir();
+      else if (!visible && !player.paused) player.pause();
+    }
+
+    toggle.addEventListener("click", function () {
+      if (player.paused) {
+        pausadoPorPersona = false;
+        quiereSonido = quiereSonido || !player.currentTime;
+        reproducir(); // tras un toque, el navegador ya deja sonar el audio
+      } else {
+        pausadoPorPersona = true;
+        player.pause();
+      }
+    });
+
+    sonido.addEventListener("click", function () {
+      player.muted = !player.muted;
+      quiereSonido = !player.muted;
+      if (player.paused) {
+        pausadoPorPersona = false;
+        reproducir();
+      }
+    });
+
+    ["play", "pause", "volumechange"].forEach(function (evento) {
+      player.addEventListener(evento, actualizarUI);
+    });
+    actualizarUI();
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entradas) {
+        enPantalla = entradas[0].isIntersecting;
+        revisar();
+      }, { threshold: 0.5 }).observe(player);
+    }
+    // La sección se queda fija y la siguiente la cubre (js/escenas.js)
+    box.closest("section").addEventListener("escena:pausa", function (event) {
+      escenaTapada = event.detail.pausada;
+      revisar();
+    });
+  }
+
+  /* ---------- Mapa interactivo de localidades ---------- */
+
+  var SVG_NS = "http://www.w3.org/2000/svg";
+
+  function svgEl(tag, attrs, text) {
+    var node = document.createElementNS(SVG_NS, tag);
+    Object.keys(attrs || {}).forEach(function (key) { node.setAttribute(key, attrs[key]); });
+    if (text) node.textContent = text;
+    return node;
+  }
+
+  /**
+   * Dibuja el plano del organizador: escenario y bocinas al frente,
+   * dos bloques de mesas VIP con un pasillo al centro y, detrás,
+   * General 1 y General 2. Medidas en unidades del viewBox (1000 × 700).
+   */
+  function renderLocalidades(section, data) {
+    var config = data.localidades || {};
+    var zonas = (Array.isArray(config.zonas) ? config.zonas : []).filter(function (z) {
+      return z && hasText(z.id) && hasText(z.nombre);
+    });
+    var box = $("[data-localidades]", section);
+    if (!box || !zonas.length) return;
+
+    var porId = {};
+    zonas.forEach(function (z) { porId[z.id] = z; });
+    var mapa = $("[data-localidades-mapa]", box);
+    var info = $("[data-localidades-info]", box);
+    var botones = $("[data-localidades-zonas]", box);
+
+    var svg = svgEl("svg", {
+      viewBox: "0 0 1000 700",
+      class: "localidades__svg",
+      role: "img",
+      "aria-label": "Plano del concierto: escenario y bocinas al frente; mesas VIP a ambos lados " +
+        "de un pasillo central; detrás, General 1 a la izquierda y General 2 a la derecha."
+    });
+
+    // Escenario y bocinas
+    svg.appendChild(svgEl("line", { x1: 40, y1: 14, x2: 960, y2: 14, class: "loc-muro" }));
+    svg.appendChild(svgEl("rect", { x: 370, y: 24, width: 260, height: 66, rx: 8, class: "loc-escenario" }));
+    svg.appendChild(svgEl("text", { x: 500, y: 66, class: "loc-escenario__texto" }, "ESCENARIO"));
+    [[215, "Bocina 1"], [715, "Bocina 2"]].forEach(function (b) {
+      svg.appendChild(svgEl("rect", { x: b[0], y: 24, width: 70, height: 84, rx: 6, class: "loc-bocina" }));
+      svg.appendChild(svgEl("text", { x: b[0] + 35, y: 71, class: "loc-bocina__texto" }, b[1]));
+    });
+
+    // Pasillo central
+    svg.appendChild(svgEl("text", { x: 500, y: 420, class: "loc-pasillo", transform: "rotate(-90 500 420)" }, "PASILLO"));
+
+    function zonaGrupo(id) {
+      var g = svgEl("g", { class: "loc-zona", "data-zona": id });
+      svg.appendChild(g);
+      return g;
+    }
+
+    // Mesas VIP: 8 columnas × 5 filas por lado
+    var vip = porId.vip ? zonaGrupo("vip") : null;
+    if (vip) {
+      [["izquierdo", 40, config.mesasIzquierda], ["derecho", 540, config.mesasDerecha]].forEach(function (lado) {
+        var x0 = lado[1];
+        vip.appendChild(svgEl("rect", { x: x0, y: 150, width: 420, height: 330, rx: 10, class: "loc-area loc-area--vip" }));
+        vip.appendChild(svgEl("text", { x: x0 + 210, y: 138, class: "loc-area__titulo" }, porId.vip.nombre));
+        (Array.isArray(lado[2]) ? lado[2] : []).slice(0, 5).forEach(function (fila, f) {
+          (Array.isArray(fila) ? fila : []).slice(0, 8).forEach(function (valor, c) {
+            var numero = Math.max(0, Math.floor(Number(valor) || 0));
+            var x = x0 + 14 + c * 50;
+            var y = 162 + f * 63;
+            var mesa = svgEl("g", { class: "loc-mesa", "data-mesa": String(numero), "data-lado": lado[0] });
+            mesa.appendChild(svgEl("rect", { x: x, y: y, width: 42, height: 52, rx: 5 }));
+            if (numero) mesa.appendChild(svgEl("text", { x: x + 21, y: y + 33 }, String(numero)));
+            vip.appendChild(mesa);
+          });
+        });
+      });
+    }
+
+    // Áreas generales
+    [["general1", 40], ["general2", 540]].forEach(function (area) {
+      var zona = porId[area[0]];
+      if (!zona) return;
+      var g = zonaGrupo(area[0]);
+      g.appendChild(svgEl("rect", { x: area[1], y: 498, width: 420, height: 180, rx: 10, class: "loc-area loc-area--general" }));
+      g.appendChild(svgEl("text", { x: area[1] + 210, y: 600, class: "loc-area__nombre" }, zona.nombre.toUpperCase()));
+    });
+
+    mapa.appendChild(svg);
+    // En teléfonos el plano es más ancho que la pantalla: se empieza
+    // centrado en el escenario y el pasillo (al siguiente cuadro, cuando
+    // la sección ya es visible y tiene medidas)
+    window.requestAnimationFrame(function () {
+      mapa.scrollLeft = (mapa.scrollWidth - mapa.clientWidth) / 2;
+    });
+
+    // Un botón por zona (también es la forma de usar el mapa con teclado)
+    var botonPorId = {};
+    zonas.forEach(function (zona) {
+      var boton = el("button", "localidades__zona localidades__zona--" + (zona.id === "vip" ? "vip" : "general"));
+      boton.type = "button";
+      boton.setAttribute("aria-pressed", "false");
+      boton.appendChild(el("span", "localidades__zona-nombre", zona.nombre));
+      if (hasText(zona.precio)) boton.appendChild(el("span", "localidades__zona-precio", zona.precio));
+      boton.addEventListener("click", function () { seleccionar(zona.id, null); });
+      botones.appendChild(boton);
+      botonPorId[zona.id] = boton;
+    });
+
+    var mesaElegida = null;
+
+    function seleccionar(id, mesa) {
+      var zona = porId[id];
+      if (!zona) return;
+      mapa.classList.add("has-seleccion");
+      svg.querySelectorAll("[data-zona]").forEach(function (g) {
+        g.classList.toggle("is-activa", g.getAttribute("data-zona") === id);
+      });
+      Object.keys(botonPorId).forEach(function (key) {
+        botonPorId[key].setAttribute("aria-pressed", String(key === id));
+      });
+      if (mesaElegida) mesaElegida.classList.remove("is-elegida");
+      mesaElegida = mesa;
+      if (mesa) mesa.classList.add("is-elegida");
+
+      info.textContent = "";
+      var titulo = zona.nombre;
+      if (mesa) {
+        var numero = mesa.getAttribute("data-mesa");
+        titulo += " · " + (numero !== "0" ? "Mesa " + numero : "Mesa sin número") +
+          " (lado " + mesa.getAttribute("data-lado") + ")";
+      }
+      var cabecera = el("p", "localidades__info-titulo", titulo);
+      if (hasText(zona.precio)) cabecera.appendChild(el("span", "localidades__info-precio", zona.precio));
+      info.appendChild(cabecera);
+      if (hasText(zona.descripcion)) info.appendChild(el("p", "localidades__info-texto", zona.descripcion));
+    }
+
+    // Toques en el mapa: una mesa o una zona
+    svg.addEventListener("click", function (event) {
+      var mesa = event.target.closest(".loc-mesa");
+      var zona = event.target.closest("[data-zona]");
+      if (zona) seleccionar(zona.getAttribute("data-zona"), mesa);
+    });
+
+    box.hidden = false;
+  }
+
+  function renderEvento() {
+    var section = $("#evento");
+    var data = DATA.evento || {};
+    var logo = data.logo || {};
+    var target = new Date(data.fecha).getTime();
+    if (!section || (DATA.secciones || {}).evento === false) return;
+    if (!hasText(logo.ruta) || isNaN(target)) {
+      section.setAttribute("data-vacia", ""); // applySectionVisibility la oculta
+      return;
+    }
+
+    section.querySelectorAll("[data-evento-campo]").forEach(function (node) {
+      var value = data[node.getAttribute("data-evento-campo")];
+      if (hasText(value)) node.textContent = value;
+      else node.remove();
+    });
+
+    // Logo del grupo (es el título de la sección); si falla, queda el nombre en texto
+    var img = $("[data-evento-logo]", section);
+    img.alt = logo.alt || "";
+    if (logo.ancho) img.width = logo.ancho;
+    if (logo.alto) img.height = logo.alto;
+    img.addEventListener("error", function () {
+      img.replaceWith(el("span", "evento-header__nombre", logo.alt || ""));
+    }, { once: true });
+    img.src = logo.ruta;
+
+    var paisPrincipal = $("[data-evento-pais]", section);
+    paisPrincipal.hidden = !fillPais(paisPrincipal, data.pais);
+
+    // Grupos invitados: logo + país
+    var invitados = (Array.isArray(data.invitados) ? data.invitados : []).filter(function (item) {
+      return item && hasText(item.nombre);
+    });
+    if (invitados.length) {
+      var lista = $("[data-evento-invitados-lista]", section);
+      invitados.forEach(function (item, i) { lista.appendChild(createInvitado(item, i)); });
+      $("[data-evento-invitados]", section).hidden = false;
+    }
+
+    var fecha = $("[data-evento-fecha]", section);
+    fecha.dateTime = data.fecha;
+    fecha.textContent = hasText(data.fechaTexto) ? data.fechaTexto : formatDate(data.fecha.slice(0, 10));
+
+    // Cuenta regresiva
+    var reloj = $("[data-evento-reloj]", section);
+    var grid = $("[data-evento-reloj-grid]", reloj);
+    reloj.hidden = false;
+    startCountdown(grid, target, function () {
+      grid.hidden = true;
+      var fin = $("[data-evento-reloj-fin]", reloj);
+      fin.textContent = data.mensajeFinal || "¡Hoy es el gran concierto!";
+      fin.classList.add("is-visible");
+    });
+
+    // Entradas y puntos de venta
+    var entradas = (Array.isArray(data.entradas) ? data.entradas : []).filter(function (e) {
+      return e && hasText(e.nombre) && hasText(e.precio);
+    });
+    var puntos = (Array.isArray(data.puntosVenta) ? data.puntosVenta : []).filter(hasText);
+    if (entradas.length) {
+      var listaEntradas = $("[data-evento-entradas]", section);
+      entradas.forEach(function (entrada, i) {
+        var li = el("li", "evento-entrada" + (entrada.destacada ? " evento-entrada--destacada" : ""));
+        li.setAttribute("data-revelar", "pop");
+        li.style.setProperty("--i", i + 1);
+        li.appendChild(el("span", "evento-entrada__nombre", entrada.nombre));
+        li.appendChild(el("span", "evento-entrada__precio", entrada.precio));
+        listaEntradas.appendChild(li);
+      });
+      if (puntos.length) {
+        var venta = $("[data-evento-venta]", section);
+        puntos.forEach(function (punto) { venta.appendChild(el("li", "", punto)); });
+        $("[data-evento-venta-box]", section).hidden = false;
+      }
+      $("[data-evento-entradas-box]", section).hidden = false;
+    }
+
+    // Video: preload="none"; solo se descarga cuando llega a la pantalla
+    var video = data.video || {};
+    if (hasText(video.ruta)) {
+      var videoBox = $("[data-evento-video-box]", section);
+      var player = $("[data-evento-video]", videoBox);
+      if (hasText(video.portada)) player.poster = video.portada;
+      if (hasText(video.titulo)) {
+        player.setAttribute("aria-label", video.titulo);
+        $("[data-evento-video-titulo]", videoBox).textContent = video.titulo;
+      }
+      var source = document.createElement("source");
+      source.src = video.ruta;
+      source.type = "video/mp4";
+      player.appendChild(source);
+      videoBox.hidden = false;
+      initVideoPromo(videoBox, player);
+    }
+
+    // Botones para llegar (abren la app si está instalada)
+    var ubicacion = data.ubicacion || {};
+    var lat = Number(ubicacion.lat);
+    var lng = Number(ubicacion.lng);
+    if (ubicacion.lat && ubicacion.lng && isFinite(lat) && isFinite(lng)) {
+      var punto = lat + "," + lng;
+      var lugar = [data.lugar, data.lugarDetalle].filter(hasText).join(", ");
+      var waze = $("[data-evento-waze]", section);
+      var maps = $("[data-evento-maps]", section);
+      waze.href = "https://waze.com/ul?ll=" + punto + "&navigate=yes";
+      maps.href = "https://www.google.com/maps/dir/?api=1&destination=" + punto;
+      waze.setAttribute("aria-label", "Cómo llegar a " + lugar + " con Waze (se abre en una pestaña nueva)");
+      maps.setAttribute("aria-label", "Cómo llegar a " + lugar + " con Google Maps (se abre en una pestaña nueva)");
+      $("[data-evento-rutas]", section).hidden = false;
+    }
+
+    renderLocalidades(section, data);
+  }
+
+  /* =========================================================
+   * Actividades: adelanto en carrusel (no es el programa oficial)
+   * Tarjetas ordenadas por fecha; las de días pasados se ocultan.
+   * Tocar un afiche lo abre completo en el visor.
+   * ======================================================= */
+
+  var DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  var MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+
+  /** Fecha de hoy en Guatemala, "AAAA-MM-DD" (sin importar la zona del visitante). */
+  function hoyEnGuatemala() {
+    try {
+      return new Date().toLocaleDateString("en-CA", { timeZone: "America/Guatemala" });
+    } catch (e) {
+      return new Date().toISOString().slice(0, 10);
+    }
+  }
+
+  /** "20:00" -> "8:00 p. m." (con espacios que no se cortan). */
+  function formatHora(hora) {
+    var partes = String(hora || "").split(":").map(Number);
+    if (partes.length !== 2 || partes.some(isNaN)) return "";
+    var h = partes[0] % 12 || 12;
+    var sufijo = partes[0] < 12 ? "a. m." : "p. m.";
+    return h + ":" + pad(partes[1]) + " " + sufijo;
+  }
+
+  /** Posición natural de una sección (las fijas de escenas.js engañan a getBoundingClientRect). */
+  function irASeccion(section, suave) {
+    var main = $("#contenido");
+    var top = main.getBoundingClientRect().top + window.scrollY;
+    Array.prototype.some.call(main.children, function (node) {
+      if (node === section) return true;
+      if (node.tagName === "SECTION" && !node.hidden) top += node.offsetHeight;
+      return false;
+    });
+    window.scrollTo({ top: Math.round(top), behavior: suave ? "smooth" : "instant" });
+  }
+
+  function createActividad(item, index, hoy) {
+    var li = el("li", "actividad");
+    li.setAttribute("data-revelar", "pop"); // crece en su lugar: no se sale del carrusel
+    li.style.setProperty("--i", Math.min(index, 3));
+    var partes = item.fecha.split("-").map(Number);
+    var dia = new Date(partes[0], partes[1] - 1, partes[2]);
+
+    // Calendario: día de la semana, número y mes
+    var fecha = el("time", "actividad__fecha");
+    fecha.dateTime = item.fecha + (hasText(item.hora) ? "T" + item.hora : "");
+    fecha.appendChild(el("span", "actividad__fecha-dia", item.fecha === hoy ? "Hoy" : DIAS[dia.getDay()]));
+    fecha.appendChild(el("span", "actividad__fecha-num", String(partes[2])));
+    fecha.appendChild(el("span", "actividad__fecha-mes", MESES[partes[1] - 1]));
+
+    var media;
+    if (hasText(item.afiche)) {
+      media = el("button", "actividad__media");
+      media.type = "button";
+      media.setAttribute("aria-label", "Ver afiche completo: " + item.titulo);
+      var img = createImage({
+        src: item.miniatura || item.afiche,
+        alt: "",
+        width: 480,
+        height: 600,
+        className: "actividad__afiche",
+        lazy: true
+      }, function (failed) {
+        failed.remove();
+        media.classList.add("actividad__media--sin-afiche");
+      });
+      if (hasText(item.encuadre)) img.style.objectPosition = item.encuadre;
+      media.appendChild(img);
+      media.addEventListener("click", function () {
+        openViewer(item.afiche, item.alt || item.titulo, item.titulo, media);
+      });
+    } else {
+      // Sin afiche todavía: tarjeta de color
+      media = el("div", "actividad__media actividad__media--sin-afiche");
+      var nombre = el("span", "actividad__arte-titulo", item.titulo);
+      nombre.setAttribute("aria-hidden", "true"); // el título ya está debajo
+      media.appendChild(nombre);
+      media.appendChild(el("span", "actividad__pronto", "Detalles pronto"));
+    }
+    media.classList.add("actividad__media--tono-" + (index % 3)); // color si no hay afiche
+    media.appendChild(fecha);
+    li.appendChild(media);
+
+    var cuerpo = el("div", "actividad__cuerpo");
+    cuerpo.appendChild(el("h3", "actividad__titulo", item.titulo));
+    var cuando = hasText(item.horaTexto) ? item.horaTexto : formatHora(item.hora);
+    var datos = [cuando, item.lugar].filter(hasText);
+    cuerpo.appendChild(el("p", "actividad__datos", datos.length ? datos.join(" · ") : "Hora y lugar por confirmar"));
+    if (hasText(item.descripcion)) cuerpo.appendChild(el("p", "actividad__texto", item.descripcion));
+    li.appendChild(cuerpo);
+    return li;
+  }
+
+  function renderActividades() {
+    var section = $("#actividades");
+    var data = DATA.actividades || {};
+    if (!section || (DATA.secciones || {}).actividades === false) return;
+
+    var hoy = hoyEnGuatemala();
+    var items = (Array.isArray(data.lista) ? data.lista : [])
+      .filter(function (item) {
+        return item && hasText(item.titulo) && /^\d{4}-\d{2}-\d{2}$/.test(String(item.fecha)) && item.fecha >= hoy;
+      })
+      .sort(function (a, b) {
+        return (a.fecha + (a.hora || "12:00")).localeCompare(b.fecha + (b.hora || "12:00"));
+      });
+    if (!items.length) {
+      section.setAttribute("data-vacia", ""); // applySectionVisibility la oculta
+      return;
+    }
+
+    var nota = $("[data-actividades-nota]", section);
+    if (hasText(data.nota)) nota.textContent = data.nota;
+    else nota.remove();
+    if (hasText(data.aviso)) {
+      $("[data-actividades-aviso-texto]", section).textContent = data.aviso;
+      $("[data-actividades-aviso]", section).hidden = false;
+    }
+
+    var lista = $("[data-actividades]", section);
+    items.forEach(function (item, i) { lista.appendChild(createActividad(item, i, hoy)); });
+
+    // Flechas (solo con ratón): avanzan casi una pantalla de tarjetas
+    var flechas = section.querySelectorAll("[data-actividades-flecha]");
+    function actualizarFlechas() {
+      var max = lista.scrollWidth - lista.clientWidth - 2;
+      flechas[0].disabled = lista.scrollLeft <= 2;
+      flechas[1].disabled = lista.scrollLeft >= max;
+    }
+    flechas.forEach(function (flecha) {
+      flecha.hidden = false;
+      flecha.addEventListener("click", function () {
+        var paso = Number(flecha.getAttribute("data-actividades-flecha"));
+        lista.scrollBy({ left: paso * lista.clientWidth * 0.85, behavior: "smooth" });
+      });
+    });
+    var pendiente = false;
+    lista.addEventListener("scroll", function () {
+      if (pendiente) return;
+      pendiente = true;
+      window.requestAnimationFrame(function () {
+        pendiente = false;
+        actualizarFlechas();
+      });
+    }, { passive: true });
+    window.requestAnimationFrame(actualizarFlechas);
+    window.addEventListener("resize", actualizarFlechas);
+  }
+
+  /** Botón "Ver actividades" de la portada. */
+  function initBotonActividades() {
+    var boton = $('[data-accion="actividades"]');
+    var section = $("#actividades");
+    if (!boton) return;
+    if (!section || section.hidden) {
+      boton.hidden = true;
+      return;
+    }
+    boton.addEventListener("click", function () { irASeccion(section, true); });
   }
 
   /* =========================================================
@@ -600,10 +1180,10 @@
   function applySectionVisibility() {
     var config = DATA.secciones || {};
     var first = null;
-    ["noticias", "flores", "patrocinadores"].forEach(function (id) {
+    ["actividades", "evento", "noticias", "flores", "patrocinadores"].forEach(function (id) {
       var section = document.getElementById(id);
       if (!section) return;
-      section.hidden = config[id] === false;
+      section.hidden = config[id] === false || section.hasAttribute("data-vacia");
       if (!section.hidden && !first) first = section;
     });
 
@@ -616,17 +1196,20 @@
     hint.href = "#" + first.id;
     var title = first.querySelector(".section__title");
     var label = $(".sr-only", hint);
-    if (title && label) label.textContent = "hacia " + title.textContent;
+    if (!label) return;
+    if (first.hasAttribute("data-hint")) label.textContent = first.getAttribute("data-hint");
+    else if (title) label.textContent = "hacia " + title.textContent;
   }
 
   /* =========================================================
-   * Enlace directo a una sección: barrancocoloradofest.com/#reinas
+   * Enlace directo a una sección: barrancocoloradofest.com/#reinas o /#concierto
    * Las secciones quedan fijas al desplazarse (js/escenas.js) y el
    * salto nativo del navegador no cae bien, así que se calcula aquí.
-   * "#reinas" no es un id: el navegador no salta por su cuenta.
+   * "#reinas", "#concierto" y "#baile" (enlace anterior) no son ids:
+   * el navegador no salta por su cuenta.
    * ======================================================= */
 
-  var ENLACES = { "#reinas": "flores" };
+  var ENLACES = { "#reinas": "flores", "#concierto": "evento", "#baile": "evento", "#actividades": "actividades" };
 
   function initEnlaceDirecto() {
     var id = ENLACES[decodeURIComponent(location.hash).toLowerCase()];
@@ -661,7 +1244,10 @@
     initSlides();
     initCountdown();
     initViewer();
+    renderEvento();
+    renderActividades();
     applySectionVisibility();
+    initBotonActividades();
     renderNoticias();
     renderApoyo();
     renderFlores();

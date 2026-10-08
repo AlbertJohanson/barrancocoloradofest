@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Feria Patronal Barranco Colorado 2026 | San Jorge, Zacapa</title>
-  <meta name="description" content="Feria Patronal de Barranco Colorado 2026, San Jorge, Zacapa, en honor a San Rafael Arcángel. Cuenta regresiva, nuestras reinas y patrocinadores.">
+  <meta name="description" content="Feria Patronal de Barranco Colorado 2026, San Jorge, Zacapa, en honor a San Rafael Arcángel. Inicia el 21 de octubre: actividades, gran concierto, nuestras reinas y patrocinadores.">
   <meta name="theme-color" content="#071B50">
   <link rel="canonical" href="https://barrancocoloradofest.com/">
   <!-- Ícono de la pestaña: logo de la feria -->
@@ -16,17 +16,17 @@
   <meta property="og:locale" content="es_GT">
   <meta property="og:site_name" content="Feria Patronal Barranco Colorado">
   <meta property="og:url" content="https://barrancocoloradofest.com/">
-  <meta property="og:title" content="Feria Patronal Barranco Colorado 2026 | Nuestras reinas">
-  <meta property="og:description" content="Conoce a las reinas de la Feria Patronal de Barranco Colorado 2026, San Jorge, Zacapa: Flor de la Feria, Flor de la Feria Infantil y sus representantes.">
-  <meta property="og:image" content="https://barrancocoloradofest.com/assets/img/compartir/reinas-2026.jpg">
+  <meta property="og:title" content="Feria Patronal Barranco Colorado 2026 | Inicia el 21 de octubre">
+  <meta property="og:description" content="Feria Patronal de Barranco Colorado, San Jorge, Zacapa, en honor a San Rafael Arcángel. Conoce las actividades, el gran concierto y a nuestras reinas.">
+  <meta property="og:image" content="https://barrancocoloradofest.com/assets/img/compartir/feria-2026.jpg">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Logo de la Feria Patronal Barranco Colorado y fotografías de sus seis reinas 2026">
+  <meta property="og:image:alt" content="Logo de la Feria Patronal Barranco Colorado con la fecha de inicio: 21 de octubre de 2026, San Jorge, Zacapa">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Feria Patronal Barranco Colorado 2026 | Nuestras reinas">
-  <meta name="twitter:description" content="Conoce a las reinas de la Feria Patronal de Barranco Colorado 2026, San Jorge, Zacapa.">
-  <meta name="twitter:image" content="https://barrancocoloradofest.com/assets/img/compartir/reinas-2026.jpg">
+  <meta name="twitter:title" content="Feria Patronal Barranco Colorado 2026 | Inicia el 21 de octubre">
+  <meta name="twitter:description" content="Feria Patronal de Barranco Colorado, San Jorge, Zacapa. Actividades, gran concierto y nuestras reinas.">
+  <meta name="twitter:image" content="https://barrancocoloradofest.com/assets/img/compartir/feria-2026.jpg">
   <!-- Tipografías similares a las del logo -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -107,7 +107,7 @@
           <p class="countdown__done" role="status" data-countdown-done></p>
         </div>
 
-        <!-- Pendiente: conectar con la agenda de actividades -->
+        <!-- Lleva al carrusel de actividades (main.js) -->
         <button class="btn btn--feria hero__cta" type="button" data-accion="actividades">Ver actividades</button>
       </div>
 
@@ -117,6 +117,143 @@
         <span class="scroll-hint__arrow" aria-hidden="true"></span>
         <span class="sr-only">hacia las noticias</span>
       </a>
+    </section>
+
+    <!-- ============ Actividades: adelanto en carrusel ============ -->
+    <!-- No es el programa oficial: algunas actividades con su afiche, desde data.js -->
+    <section class="section section--actividades" id="actividades" aria-labelledby="titulo-actividades" data-hint="hacia las actividades" hidden>
+      <div class="container">
+        <header class="section__header section__header--center actividades-header">
+          <!-- Logo de la feria en pequeño (el mismo archivo de la portada, ya en caché) -->
+          <img class="actividades-header__logo" data-revelar="pop" src="assets/img/logo/logo.webp"
+               alt="Feria Patronal Barranco Colorado 2026" width="1000" height="775" loading="lazy" decoding="async">
+          <h2 class="actividades-header__titulo" id="titulo-actividades" data-revelar="pop" style="--i: 1">Lo que se viene</h2>
+          <p class="actividades-header__nota" data-actividades-nota data-revelar style="--i: 2"></p>
+        </header>
+
+        <!-- Aviso: el programa oficial todavía se está preparando -->
+        <p class="actividades-aviso" data-actividades-aviso data-revelar="pop" style="--i: 3" hidden>
+          <svg class="actividades-aviso__icono" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 2v2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2h-4V2H8Zm-2 7h12v11H6V9Zm2 3v2h2v-2H8Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2Zm-8 4v2h2v-2H8Zm4 0v2h2v-2h-2Z"/></svg>
+          <span data-actividades-aviso-texto></span>
+        </p>
+
+        <div class="actividades-carrusel">
+          <button class="actividades-flecha actividades-flecha--antes" type="button" data-actividades-flecha="-1" aria-label="Actividades anteriores" hidden>
+            <span aria-hidden="true">‹</span>
+          </button>
+          <ul class="actividades-lista" data-actividades tabindex="0" aria-label="Actividades, desliza para ver más"></ul>
+          <button class="actividades-flecha actividades-flecha--despues" type="button" data-actividades-flecha="1" aria-label="Más actividades" hidden>
+            <span aria-hidden="true">›</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Evento destacado: gran concierto ============ -->
+    <!-- Estilo inspirado en el logo del grupo: noche, fuego y dorado. Contenido desde data.js -->
+    <section class="section section--evento" id="evento" aria-labelledby="titulo-evento" data-hint="hacia el gran concierto" hidden>
+      <div class="evento-fuego" aria-hidden="true"></div>
+
+      <div class="container evento-inner">
+        <header class="evento-header">
+          <p class="evento-header__etiqueta" data-evento-campo="etiqueta" data-revelar="desplegar"></p>
+          <h2 class="evento-header__titulo" id="titulo-evento">
+            <img class="evento-header__logo" data-evento-logo data-revelar="pop" style="--i: 1" decoding="async">
+          </h2>
+          <!-- País del grupo principal (bandera + nombre) -->
+          <p class="evento-pais" data-evento-pais data-revelar style="--i: 2" hidden></p>
+
+          <div class="evento-invitados" data-evento-invitados hidden>
+            <p class="evento-invitados__texto" data-evento-campo="invitadosTexto" data-revelar style="--i: 3"></p>
+            <ul class="evento-invitados__lista" data-evento-invitados-lista></ul>
+          </div>
+        </header>
+
+        <div class="evento-grid">
+          <div class="evento-col">
+            <p class="evento-fecha" data-revelar="pop" style="--i: 2">
+              <time data-evento-fecha></time>
+            </p>
+
+            <!-- Cuenta regresiva propia (clases distintas a las de la portada) -->
+            <div class="evento-reloj" role="group" aria-labelledby="titulo-evento-reloj" data-evento-reloj hidden>
+              <h3 class="sr-only" id="titulo-evento-reloj">Cuenta regresiva para el concierto</h3>
+              <div class="evento-reloj__grid" data-evento-reloj-grid>
+                <div class="evento-reloj__unidad" data-revelar="voltear" style="--i: 3">
+                  <span class="evento-reloj__num" data-unit="dias">--</span>
+                  <span class="evento-reloj__label">Días</span>
+                </div>
+                <div class="evento-reloj__unidad" data-revelar="voltear" style="--i: 4">
+                  <span class="evento-reloj__num" data-unit="horas">--</span>
+                  <span class="evento-reloj__label">Horas</span>
+                </div>
+                <div class="evento-reloj__unidad" data-revelar="voltear" style="--i: 5">
+                  <span class="evento-reloj__num" data-unit="minutos">--</span>
+                  <span class="evento-reloj__label">Min</span>
+                </div>
+                <div class="evento-reloj__unidad" data-revelar="voltear" style="--i: 6">
+                  <span class="evento-reloj__num" data-unit="segundos">--</span>
+                  <span class="evento-reloj__label">Seg</span>
+                </div>
+              </div>
+              <p class="evento-reloj__fin" role="status" data-evento-reloj-fin></p>
+            </div>
+
+            <!-- Precios de las entradas -->
+            <div class="evento-entradas" data-evento-entradas-box hidden>
+              <h3 class="evento-subtitulo" data-revelar>Entradas</h3>
+              <ul class="evento-entradas__lista" data-evento-entradas></ul>
+              <div class="evento-venta" data-evento-venta-box data-revelar style="--i: 2" hidden>
+                <p class="evento-venta__titulo">De venta en:</p>
+                <ul class="evento-venta__lista" data-evento-venta></ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="evento-col">
+            <!-- Video promocional: se reproduce en bucle solo mientras está en pantalla.
+                 Sin controles: tocarlo pausa o reanuda; el botón de la esquina activa el sonido. -->
+            <figure class="evento-video" data-evento-video-box data-revelar="voltear" hidden>
+              <video class="evento-video__player" data-evento-video loop playsinline preload="none" width="848" height="478"></video>
+              <button class="evento-video__toggle" type="button" data-evento-video-toggle aria-label="Reproducir video">
+                <span class="evento-video__icono" aria-hidden="true"></span>
+              </button>
+              <button class="evento-video__sonido" type="button" data-evento-video-sonido hidden>
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4Zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4ZM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6Z"/></svg>
+                <span data-evento-video-sonido-texto>Activar sonido</span>
+              </button>
+              <figcaption class="sr-only" data-evento-video-titulo></figcaption>
+            </figure>
+
+            <!-- Lugar y botones para llegar -->
+            <div class="evento-lugar" data-revelar style="--i: 1">
+              <h3 class="evento-subtitulo">¿Dónde?</h3>
+              <p class="evento-lugar__nombre" data-evento-campo="lugar"></p>
+              <p class="evento-lugar__detalle" data-evento-campo="lugarDetalle"></p>
+              <div class="evento-lugar__botones" data-evento-rutas hidden>
+                <a class="btn btn--ruta btn--waze" data-evento-waze target="_blank" rel="noopener noreferrer">
+                  <svg class="btn__icono" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.5c-4.9 0-9 3.7-9 8.6 0 1.8.6 3.3 1.5 4.3-.3 1.2-1 2-2.1 2.4.9.9 2.4 1.4 4 1.1A2.5 2.5 0 0 0 11 19h2.2a2.5 2.5 0 0 0 4.7-.5c2.4-1.5 4.1-4.1 4.1-7.4 0-4.9-5-8.6-10-8.6Zm-3 6.8a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Zm6 0a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Zm-6.8 4.3h1.4a2.4 2.4 0 0 0 4.8 0h1.4a3.8 3.8 0 0 1-7.6 0Z"/></svg>
+                  <span>Ir con Waze</span>
+                </a>
+                <a class="btn btn--ruta btn--maps" data-evento-maps target="_blank" rel="noopener noreferrer">
+                  <svg class="btn__icono" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>
+                  <span>Ir con Google Maps</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mapa interactivo de localidades (dibujado por main.js desde data.js) -->
+        <div class="localidades" data-localidades hidden>
+          <h3 class="evento-subtitulo" data-revelar>Mapa de localidades</h3>
+          <p class="localidades__ayuda" data-revelar style="--i: 1">Toca una zona o una mesa para ver sus detalles.
+            <span class="localidades__desliza">Desliza el plano hacia los lados para verlo completo.</span></p>
+          <div class="localidades__mapa" data-localidades-mapa data-revelar="voltear" style="--i: 2"></div>
+          <div class="localidades__zonas" role="group" aria-label="Zonas del concierto" data-localidades-zonas></div>
+          <div class="localidades__info" data-localidades-info aria-live="polite"></div>
+        </div>
+      </div>
     </section>
 
     <!-- ============ Noticias ============ -->

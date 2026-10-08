@@ -1318,6 +1318,1083 @@ a {
 }
 
 /* =========================================================
+ * Evento destacado: gran concierto
+ * Inspirado en el logo del grupo: noche, fuego y dorado.
+ * Todo es estático (sin animaciones infinitas).
+ * ======================================================= */
+.section--evento {
+  --oro: #FFC93C;
+  --oro-claro: #FFE9A3;
+  --fuego: #FF6A00;
+  --rojo: #D3160E;
+  --brasa: #170404;
+  --rosa: var(--fuego); /* brillo del borde de la hoja (escenas) */
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 75% 40% at 50% 8%, rgba(255, 106, 0, 0.38), transparent 70%),
+    radial-gradient(ellipse 70% 45% at 50% 105%, rgba(211, 22, 14, 0.4), transparent 70%),
+    radial-gradient(ellipse 45% 35% at 0 55%, rgba(255, 201, 60, 0.1), transparent 70%),
+    var(--brasa);
+  color: #FBEADF;
+}
+
+/* Chispas de fondo (estáticas, como los destellos de las Flores) */
+.evento-fuego {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 201, 60, 0.6) 0 2px, transparent 3px),
+    radial-gradient(circle, rgba(255, 106, 0, 0.5) 0 3px, transparent 4px),
+    radial-gradient(circle, rgba(255, 233, 163, 0.35) 0 1.5px, transparent 2.5px);
+  background-size: 150px 170px, 230px 200px, 95px 120px;
+  background-position: 20px 30px, 90px 110px, 50px 10px;
+  -webkit-mask-image: linear-gradient(0deg, #000, transparent 70%);
+          mask-image: linear-gradient(0deg, #000, transparent 70%);
+}
+
+.section--evento h3 {
+  color: inherit;
+}
+
+/* ---------- Encabezado: cinta, logo e invitados ---------- */
+.evento-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.evento-header__etiqueta {
+  padding: 0.4rem 1.4rem 0.45rem;
+  border: 2px solid var(--oro);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FF8A1F 0%, var(--fuego) 45%, #C23A00 100%);
+  box-shadow: 0 4px 0 #6B1A00, 0 10px 22px rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 4vw, 1.35rem);
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  text-shadow: 0 2px 0 #7A2000;
+}
+
+.evento-header__titulo {
+  margin-block: 0.25rem;
+}
+
+.evento-header__logo {
+  width: min(92vw, 600px);
+  height: auto;
+  filter: drop-shadow(0 14px 26px rgba(0, 0, 0, 0.6));
+}
+
+/* Si el logo no carga */
+.evento-header__nombre {
+  display: block;
+  color: var(--oro);
+  font-size: clamp(2rem, 8vw, 3.25rem);
+  text-shadow: 0 4px 0 #6B1A00;
+}
+
+/* País de cada grupo: bandera + nombre */
+.evento-pais {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid rgba(255, 233, 163, 0.45);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+}
+
+.evento-pais__bandera {
+  display: flex;
+}
+
+.evento-pais__bandera svg {
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.evento-pais--chico {
+  font-size: 0.9rem;
+}
+
+.evento-pais--chico svg {
+  width: 21px;
+  height: 14px;
+}
+
+/* Grupos invitados: logo + país */
+.evento-invitados {
+  margin-top: 1rem;
+}
+
+.evento-invitados__texto {
+  color: var(--oro-claro);
+  font-family: var(--font-script);
+  font-size: 1.3rem;
+}
+
+.evento-invitados__lista {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem 1.5rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.evento-invitado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  width: min(40vw, 210px);
+}
+
+.evento-invitado__logo {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
+}
+
+/* Si el logo no carga */
+.evento-invitado__nombre {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+/* ---------- Columnas ---------- */
+.evento-grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+.evento-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  min-width: 0;
+}
+
+@media (min-width: 900px) {
+  .evento-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 3rem;
+  }
+}
+
+.evento-subtitulo {
+  margin-bottom: 0.75rem;
+  color: var(--oro);
+  font-size: clamp(1.4rem, 5vw, 1.75rem);
+  text-align: center;
+  text-shadow: 0 3px 0 #5A1200;
+}
+
+/* ---------- Fecha y cuenta regresiva ---------- */
+.evento-fecha {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 6.5vw, 2.25rem);
+  line-height: 1.15;
+  text-align: center;
+  text-wrap: balance;
+  text-shadow: 0 3px 0 #7A2000, 0 0 22px rgba(255, 106, 0, 0.55);
+}
+
+.evento-reloj__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(0.4rem, 2vw, 0.8rem);
+}
+
+.evento-reloj__unidad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem 0.2rem 0.55rem;
+  border: 2px solid rgba(255, 201, 60, 0.85);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(200, 40, 10, 0.75) 0%, rgba(40, 6, 4, 0.92) 100%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 233, 163, 0.3);
+}
+
+/* Mismo relleno que el contador de la portada, con borde rojo oscuro */
+.evento-reloj__num,
+.evento-reloj__fin.is-visible {
+  background: linear-gradient(180deg, #FFF6B0 0%, #FFD600 32%, #FF9A00 66%, #FF5A00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-family: var(--font-timer);
+  filter:
+    drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+    drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+    drop-shadow(0 4px 0 #5A0E00);
+}
+
+.evento-reloj__num {
+  padding-inline: 0.12em;
+  font-size: clamp(2rem, 9.5vw, 3.4rem);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.evento-reloj__label {
+  margin-top: 0.3rem;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(0.75rem, 3vw, 0.95rem);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 2px 0 #5A0E00;
+}
+
+.evento-reloj__fin:empty {
+  display: none;
+}
+
+.evento-reloj__fin.is-visible {
+  font-size: clamp(1.9rem, 7.5vw, 3rem);
+  line-height: 1.15;
+  text-align: center;
+}
+
+@media (max-width: 339px) {
+  .evento-reloj__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Entradas (forma de boleto con muescas) ---------- */
+.evento-entradas__lista {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.evento-entrada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 1.1rem 1.25rem 1.2rem;
+  border-radius: 14px;
+  /* Línea punteada por dentro, para que no la corten las muescas */
+  outline: 2px dashed rgba(255, 201, 60, 0.7);
+  outline-offset: -10px;
+  background: linear-gradient(160deg, #3A0A06 0%, #220503 100%);
+  text-align: center;
+  /* Muescas laterales del boleto */
+  -webkit-mask:
+    radial-gradient(circle 8px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 8px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+          mask:
+    radial-gradient(circle 8px at 0 50%, transparent 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle 8px at 100% 50%, transparent 98%, #000) right / 51% 100% no-repeat;
+}
+
+.evento-entrada__nombre {
+  color: var(--oro-claro);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.evento-entrada__precio {
+  color: #fff;
+  font-family: var(--font-timer);
+  font-size: clamp(2rem, 8vw, 2.6rem);
+  line-height: 1.1;
+  text-shadow: 0 3px 0 #6B1A00;
+}
+
+.evento-entrada--destacada {
+  outline-color: rgba(122, 32, 0, 0.55);
+  background: linear-gradient(180deg, #FFE45C 0%, var(--amarillo) 45%, #FFA800 100%);
+}
+
+.evento-entrada--destacada .evento-entrada__nombre {
+  color: #6B1A00;
+}
+
+.evento-entrada--destacada .evento-entrada__precio {
+  color: #3A0A06;
+  text-shadow: 0 2px 0 rgba(255, 255, 255, 0.55);
+}
+
+.evento-venta {
+  margin-top: 1.1rem;
+  padding: 0.9rem 1.1rem;
+  border-left: 4px solid var(--fuego);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 106, 0, 0.08);
+}
+
+.evento-venta__titulo {
+  color: var(--oro-claro);
+  font-weight: 700;
+}
+
+.evento-venta__lista {
+  margin: 0.35rem 0 0;
+  padding-left: 1.2rem;
+}
+
+.evento-venta__lista li::marker {
+  color: var(--fuego);
+}
+
+/* ---------- Video ---------- */
+.evento-video {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border: 3px solid var(--oro);
+  border-radius: var(--radius);
+  background: #000;
+  box-shadow: 0 0 0 5px rgba(255, 106, 0, 0.15), 0 20px 44px rgba(0, 0, 0, 0.55);
+}
+
+.evento-video__player {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 848 / 478;
+  background: #000;
+}
+
+/* Capa que cubre el video: tocarla pausa o reanuda */
+.evento-video__toggle {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.evento-video__toggle:focus-visible {
+  outline: 3px solid var(--oro);
+  outline-offset: -6px;
+}
+
+/* Botón de reproducir: solo se ve en pausa */
+.evento-video__icono {
+  display: none;
+  width: 72px;
+  height: 72px;
+  border: 3px solid var(--oro);
+  border-radius: 50%;
+  background: rgba(23, 4, 4, 0.75);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.evento-video__icono::before {
+  content: "";
+  display: block;
+  margin-left: 6px; /* un triángulo centrado se ve corrido a la izquierda */
+  border-style: solid;
+  border-width: 15px 0 15px 25px;
+  border-color: transparent transparent transparent var(--oro);
+}
+
+.evento-video.is-pausado .evento-video__icono {
+  display: grid;
+  place-items: center;
+}
+
+.evento-video__sonido {
+  position: absolute;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 40px;
+  padding: 0.4rem 0.9rem;
+  border: 2px solid rgba(255, 233, 163, 0.7);
+  border-radius: 999px;
+  background: rgba(23, 4, 4, 0.8);
+  color: #fff;
+  font: inherit;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+/* Silenciado: botón dorado para llamar la atención */
+.evento-video__sonido.is-silenciado {
+  border-color: #fff;
+  background: linear-gradient(180deg, #FFE45C 0%, var(--amarillo) 45%, #FFA800 100%);
+  color: #3A0A06;
+}
+
+.evento-video__sonido:focus-visible {
+  outline-color: #fff;
+}
+
+/* ---------- Lugar y botones para llegar ---------- */
+.evento-lugar {
+  padding: 1.4rem 1.25rem;
+  border: 2px solid rgba(255, 201, 60, 0.55);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(ellipse at 50% 0, rgba(255, 106, 0, 0.22), transparent 70%),
+    linear-gradient(160deg, #2E0805, #170404);
+  text-align: center;
+}
+
+.evento-lugar .evento-subtitulo {
+  margin-bottom: 0.25rem;
+}
+
+.evento-lugar__nombre {
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 6vw, 1.9rem);
+  line-height: 1.15;
+}
+
+.evento-lugar__detalle {
+  color: #F0D3C2;
+}
+
+.evento-lugar__botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.1rem;
+}
+
+.btn--ruta {
+  flex: 1 1 200px;
+  gap: 0.55rem;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 400;
+}
+
+.btn--ruta:hover { transform: translateY(-2px); }
+
+.btn--waze {
+  border: 2px solid #B9EEFF;
+  background: #33CCFF;
+  color: #04243A;
+}
+
+.btn--waze:focus-visible { outline-color: #B9EEFF; }
+
+.btn--maps {
+  border: 2px solid #C6DAFC;
+  background: #1A73E8;
+  color: #fff;
+}
+
+.btn--maps:focus-visible { outline-color: #C6DAFC; }
+
+/* ---------- Mapa interactivo de localidades ---------- */
+.localidades {
+  margin-top: 3rem;
+}
+
+.localidades__ayuda {
+  margin-bottom: 1rem;
+  color: #F0D3C2;
+  text-align: center;
+}
+
+/* Solo cuando el plano no cabe y se desplaza de lado */
+.localidades__desliza {
+  display: block;
+  color: var(--oro-claro);
+  font-size: 0.95rem;
+}
+
+@media (min-width: 700px) {
+  .localidades__desliza {
+    display: none;
+  }
+}
+
+/* En teléfonos el plano se desplaza de lado para que los números se lean */
+.localidades__mapa {
+  overflow-x: auto;
+  overflow-y: hidden; /* solo se desliza de lado */
+  padding: 0.75rem;
+  border: 2px solid rgba(255, 201, 60, 0.55);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #2A0805, #140303);
+  overscroll-behavior-x: contain;
+  scrollbar-color: var(--fuego) transparent;
+}
+
+.localidades__svg {
+  display: block;
+  width: 100%;
+  min-width: 600px;
+  height: auto;
+  margin-inline: auto;
+  font-family: var(--font-display);
+  user-select: none;
+}
+
+@media (min-width: 700px) {
+  .localidades__svg {
+    min-width: 0;
+    max-width: 920px;
+  }
+}
+
+.localidades__svg text {
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.loc-muro {
+  stroke: rgba(255, 233, 163, 0.4);
+  stroke-width: 3;
+}
+
+.loc-escenario {
+  fill: var(--rojo);
+  stroke: var(--oro);
+  stroke-width: 3;
+}
+
+.loc-escenario__texto {
+  fill: #fff;
+  font-size: 30px;
+  letter-spacing: 0.08em;
+}
+
+.loc-bocina {
+  fill: #3A1A14;
+  stroke: rgba(255, 233, 163, 0.5);
+  stroke-width: 2;
+}
+
+.loc-bocina__texto {
+  fill: #F0D3C2;
+  font-size: 14px;
+}
+
+.loc-pasillo {
+  fill: rgba(255, 233, 163, 0.45);
+  font-size: 20px;
+  letter-spacing: 0.3em;
+}
+
+.loc-zona {
+  cursor: pointer;
+  transition: opacity 0.25s ease;
+}
+
+.loc-area {
+  stroke-width: 3;
+  transition: fill 0.2s ease;
+}
+
+.loc-area--vip {
+  fill: rgba(255, 201, 60, 0.1);
+  stroke: var(--oro);
+}
+
+.loc-area--general {
+  fill: rgba(255, 106, 0, 0.22);
+  stroke: var(--fuego);
+}
+
+.loc-area__titulo {
+  fill: var(--oro);
+  font-size: 30px;
+}
+
+.loc-area__nombre {
+  fill: #fff;
+  font-size: 38px;
+  letter-spacing: 0.05em;
+}
+
+.loc-mesa rect {
+  fill: var(--oro);
+  stroke: #7A4A00;
+  stroke-width: 2;
+  transition: fill 0.2s ease;
+}
+
+.loc-mesa text {
+  fill: #3A0A06;
+  font-size: 20px;
+}
+
+/* Selección: la zona elegida resalta y el resto se atenúa */
+.localidades__mapa.has-seleccion .loc-zona:not(.is-activa) {
+  opacity: 0.4;
+}
+
+.loc-zona.is-activa .loc-area--vip { fill: rgba(255, 201, 60, 0.25); }
+.loc-zona.is-activa .loc-area--general { fill: rgba(255, 106, 0, 0.45); }
+
+.loc-mesa.is-elegida rect {
+  fill: #fff;
+  stroke: var(--fuego);
+  stroke-width: 4;
+}
+
+@media (hover: hover) {
+  .loc-zona:hover .loc-area--general { fill: rgba(255, 106, 0, 0.38); }
+  .loc-mesa:hover rect { fill: var(--oro-claro); }
+}
+
+/* Botones de zona (leyenda) */
+.localidades__zonas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.localidades__zona {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 48px;
+  padding: 0.5rem 1.1rem;
+  border: 2px solid var(--fuego);
+  border-radius: 999px;
+  background: rgba(255, 106, 0, 0.12);
+  color: #fff;
+  font: inherit;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.localidades__zona--vip {
+  border-color: var(--oro);
+  background: rgba(255, 201, 60, 0.12);
+}
+
+.localidades__zona-precio {
+  color: var(--oro-claro);
+}
+
+.localidades__zona[aria-pressed="true"] {
+  background: var(--fuego);
+}
+
+.localidades__zona--vip[aria-pressed="true"] {
+  background: var(--oro);
+  color: #3A0A06;
+}
+
+.localidades__zona--vip[aria-pressed="true"] .localidades__zona-precio {
+  color: #6B1A00;
+}
+
+.localidades__zona:focus-visible {
+  outline-color: #fff;
+}
+
+/* Detalle de lo seleccionado */
+.localidades__info {
+  max-width: 640px;
+  margin: 1rem auto 0;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--oro);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 201, 60, 0.08);
+}
+
+.localidades__info:empty {
+  display: none;
+}
+
+.localidades__info-titulo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+}
+
+.localidades__info-precio {
+  color: var(--oro);
+  font-family: var(--font-timer);
+  font-size: 1.5rem;
+}
+
+.localidades__info-texto {
+  margin-top: 0.25rem;
+  color: #F0D3C2;
+}
+
+/* =========================================================
+ * Actividades: adelanto en carrusel
+ * Mismo estilo que la portada: noche azul, cinta fucsia, dorado
+ * y recuadros como los del contador. Sin animaciones continuas.
+ * ======================================================= */
+.section--actividades {
+  --oro: var(--amarillo);
+  --rosa: var(--fucsia); /* brillo del borde de la hoja (escenas) */
+
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 0, #1466F5 0%, #0A3CB0 40%, transparent 75%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(230, 0, 126, 0.18), transparent 70%),
+    var(--marino);
+  color: #fff;
+}
+
+/* Destellos de fondo (estáticos) */
+.section--actividades::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255, 214, 0, 0.55) 0 2px, transparent 3px),
+    radial-gradient(circle, rgba(0, 188, 235, 0.45) 0 2.5px, transparent 3.5px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 1.5px, transparent 2.5px);
+  background-size: 160px 150px, 230px 210px, 95px 115px;
+  background-position: 15px 25px, 80px 100px, 45px 10px;
+  -webkit-mask-image: linear-gradient(180deg, #000, transparent 65%);
+          mask-image: linear-gradient(180deg, #000, transparent 65%);
+}
+
+/* ---------- Encabezado ---------- */
+.actividades-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Logo de la feria en pequeño, con la misma sombra que en la portada */
+.actividades-header__logo {
+  width: min(48vw, 210px);
+  height: auto;
+  filter: drop-shadow(0 10px 18px rgba(3, 12, 40, 0.6));
+}
+
+/* Letras doradas con contorno, como los números del contador */
+.actividades-header__titulo {
+  padding-inline: 0.1em;
+  font-family: var(--font-timer);
+  font-size: clamp(2.3rem, 10vw, 3.6rem);
+  line-height: 1.1;
+  background: linear-gradient(180deg, #FFF6B0 0%, #FFD600 32%, #FF9A00 66%, #FF5A00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter:
+    drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+    drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+    drop-shadow(0 4px 0 #0A1F6B);
+}
+
+.actividades-header__nota {
+  max-width: 36rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 1.05rem;
+}
+
+/* Aviso: el programa oficial está en preparación */
+.actividades-aviso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 640px;
+  margin: 0 auto 1.75rem;
+  padding: 0.85rem 1.2rem;
+  border: 2px solid rgba(255, 214, 0, 0.85);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(20, 70, 200, 0.72) 0%, rgba(7, 27, 80, 0.88) 100%);
+  box-shadow: 0 10px 24px rgba(3, 12, 40, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.actividades-aviso__icono {
+  flex: none;
+  color: var(--amarillo);
+}
+
+.actividades-carrusel {
+  position: relative;
+}
+
+/* La lista llega hasta los bordes de la pantalla en teléfonos */
+.actividades-lista {
+  display: flex;
+  gap: 1rem;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0.5rem var(--gutter) 1.5rem;
+  overflow-x: auto;
+  overflow-y: hidden; /* solo se desliza de lado */
+  list-style: none;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--amarillo) transparent;
+}
+
+.actividades-lista:focus-visible {
+  outline-color: var(--amarillo);
+  outline-offset: -3px;
+}
+
+/* Tarjeta con el marco de los recuadros del contador */
+.actividad {
+  display: flex;
+  flex: 0 0 min(76vw, 270px);
+  flex-direction: column;
+  overflow: hidden;
+  border: 2px solid rgba(255, 214, 0, 0.85);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(20, 70, 200, 0.72) 0%, rgba(7, 27, 80, 0.92) 100%);
+  box-shadow: 0 10px 24px rgba(3, 12, 40, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  scroll-snap-align: start;
+}
+
+/* ---------- Afiche (o tarjeta de color) ---------- */
+.actividad__media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: var(--marino);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.actividad__media:focus-visible {
+  outline-offset: -4px;
+  outline-color: var(--amarillo);
+}
+
+.actividad__afiche {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+@media (hover: hover) {
+  .actividad__media:hover .actividad__afiche {
+    transform: scale(1.04);
+  }
+}
+
+/* Sin afiche: colores de la feria con confeti estático */
+.actividad__media--sin-afiche {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4.5rem 1.25rem 1.25rem;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 3px, transparent 4px),
+    radial-gradient(circle, rgba(255, 214, 0, 0.7) 0 4px, transparent 5px),
+    linear-gradient(150deg, #FF2E9A, #7A0045);
+  background-size: 70px 80px, 110px 95px, auto;
+  background-position: 10px 15px, 45px 50px, 0 0;
+  cursor: default;
+}
+
+.actividad__media--sin-afiche.actividad__media--tono-1 {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 3px, transparent 4px),
+    radial-gradient(circle, rgba(0, 188, 235, 0.7) 0 4px, transparent 5px),
+    linear-gradient(150deg, var(--naranja), #A33A00);
+}
+
+.actividad__media--sin-afiche.actividad__media--tono-2 {
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 3px, transparent 4px),
+    radial-gradient(circle, rgba(255, 214, 0, 0.7) 0 4px, transparent 5px),
+    linear-gradient(150deg, var(--celeste), var(--azul));
+}
+
+.actividad__arte-titulo {
+  font-family: var(--font-script);
+  font-size: clamp(2.2rem, 10vw, 2.8rem);
+  line-height: 1.1;
+  text-align: center;
+  text-shadow: 0 4px 0 rgba(3, 12, 40, 0.45);
+}
+
+.actividad__pronto {
+  padding: 0.4rem 1.1rem;
+  border: 2px solid var(--amarillo);
+  border-radius: 999px;
+  background: rgba(7, 27, 80, 0.55);
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+/* Calendario en la esquina */
+.actividad__fecha {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  width: 58px;
+  overflow: hidden;
+  border: 2px solid var(--amarillo);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 6px 16px rgba(3, 12, 40, 0.45);
+  color: var(--marino);
+  text-align: center;
+  line-height: 1;
+}
+
+.actividad__fecha-dia {
+  padding: 0.25rem 0 0.2rem;
+  background: linear-gradient(180deg, #FF2E9A, var(--fucsia));
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.actividad__fecha-num {
+  padding-top: 0.25rem;
+  font-family: var(--font-timer);
+  font-size: 1.65rem;
+}
+
+.actividad__fecha-mes {
+  padding-bottom: 0.3rem;
+  color: var(--gris);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ---------- Texto ---------- */
+.actividad__cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 1rem 1.1rem 1.2rem;
+  text-align: center;
+}
+
+.actividad__titulo {
+  color: #fff;
+  font-size: 1.25rem;
+  text-shadow: 0 2px 0 var(--marino);
+}
+
+.actividad__datos {
+  color: var(--amarillo);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.actividad__texto {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.95rem;
+}
+
+/* ---------- Flechas doradas (solo con ratón y pantallas anchas) ---------- */
+.actividades-flecha {
+  display: none;
+}
+
+@media (hover: hover) and (min-width: 900px) {
+  .actividades-lista {
+    margin-inline: 0;
+    padding-inline: 0;
+    scroll-padding-inline: 0;
+  }
+
+  .actividades-flecha {
+    position: absolute;
+    /* Centro de las tarjetas: la lista tiene 0.5rem arriba y 1.5rem abajo */
+    top: calc(50% - 0.5rem);
+    translate: 0 -50%;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    padding: 0 0 4px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #FFE45C 0%, var(--amarillo) 45%, #FFA800 100%);
+    box-shadow: 0 4px 0 #B35A00, 0 10px 22px rgba(3, 12, 40, 0.45);
+    color: var(--marino);
+    font-size: 2rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .actividades-flecha--antes { left: -22px; }
+  .actividades-flecha--despues { right: -22px; }
+
+  .actividades-flecha:focus-visible {
+    outline-color: #fff;
+  }
+
+  .actividades-flecha:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* =========================================================
  * Pie de página
  * ======================================================= */
 .site-footer {
@@ -1627,6 +2704,8 @@ main {
 }
 
 /* Brillo dorado en el borde superior de la hoja de las Flores */
+.escenas .section--evento.escena--entra::before,
+.escenas .section--actividades.escena--entra::before,
 .escenas .section--flores.escena--entra::before,
 .escenas .section--patrocinadores.escena--entra::before {
   content: "";
