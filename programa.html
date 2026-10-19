@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Programa oficial | Feria Patronal Barranco Colorado 2026</title>
+  <meta name="description" content="Programa oficial de la Feria Patronal de Barranco Colorado 2026, San Jorge, Zacapa, del 21 al 25 de octubre: desfiles, conciertos, serenatas, procesión, quema del castillo y desfile hípico.">
+  <meta name="theme-color" content="#061642">
+  <link rel="canonical" href="https://barrancocoloradofest.com/programa.html">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/icono/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="assets/img/icono/favicon-48.png">
+  <link rel="apple-touch-icon" href="assets/img/icono/apple-touch-icon.png">
+  <!-- Vista previa al compartir. Las URL deben ser absolutas. -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="es_GT">
+  <meta property="og:site_name" content="Feria Patronal Barranco Colorado">
+  <meta property="og:url" content="https://barrancocoloradofest.com/programa.html">
+  <meta property="og:title" content="Programa oficial | Feria Patronal Barranco Colorado 2026">
+  <meta property="og:description" content="Todas las actividades de la feria, día por día, del 21 al 25 de octubre.">
+  <meta property="og:image" content="https://barrancocoloradofest.com/assets/img/compartir/feria-2026.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Logo de la Feria Patronal Barranco Colorado con la fecha de inicio: 21 de octubre de 2026, San Jorge, Zacapa">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Programa oficial | Feria Patronal Barranco Colorado 2026">
+  <meta name="twitter:description" content="Todas las actividades de la feria, día por día, del 21 al 25 de octubre.">
+  <meta name="twitter:image" content="https://barrancocoloradofest.com/assets/img/compartir/feria-2026.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Kaushan+Script&family=Lilita+One&display=swap">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- El programa vive en data.js; programa.js arma la página -->
+  <script src="js/data.js" defer></script>
+  <script src="js/programa.js" defer></script>
+  <!-- Fuegos pequeños con San Rafael y la iglesia -->
+  <script src="js/figuras.js" defer></script>
+  <script src="js/fuegos.js" defer></script>
+  <!-- Neón de San Rafael y la iglesia a los lados de las actividades -->
+  <script src="js/neon.js" defer></script>
+  <script src="js/reinas.js" defer></script>
+  <script src="js/pie.js" defer></script>
+  <script src="js/escenas.js" defer></script>
+</head>
+<body class="pagina-programa">
+  <!-- Cada sección es una escena (js/escenas.js): se queda fija y la siguiente sube encima -->
+  <main id="contenido" class="programa" data-programa-pagina>
+    <!-- ============ Cabecera: la iglesia de fondo y San Rafael en un arco ============ -->
+    <section class="programa-portada" aria-label="Programa oficial">
+      <div class="programa-portada__fondo" aria-hidden="true">
+        <img src="assets/img/portada/iglesia.webp" alt="" width="1920" height="1440" fetchpriority="high" decoding="async">
+      </div>
+
+      <div class="container programa-barra">
+        <a class="programa-barra__volver" href="./"><span aria-hidden="true">‹</span> Inicio</a>
+        <img class="programa-barra__logo" src="assets/img/logo/logo.webp" alt="Feria Patronal Barranco Colorado 2026" width="1000" height="775" decoding="async">
+      </div>
+
+      <div class="container programa-portada__inner" data-escena-contenido>
+        <div class="programa-portada__texto">
+          <p class="programa-portada__eyebrow" data-revelar="desplegar">Feria Patronal 2026</p>
+          <h1 class="programa-portada__titulo" data-revelar="escribir" style="--i: 1">Programa oficial</h1>
+          <p class="programa-portada__fechas" data-programa-fechas data-revelar style="--i: 3">Del 21 al 25 de octubre de 2026</p>
+          <p class="programa-portada__lugar" data-revelar style="--i: 4">Barranco Colorado, San Jorge, Zacapa</p>
+        </div>
+
+        <figure class="programa-santo" data-revelar="pop">
+          <span class="programa-santo__arco">
+            <img src="assets/img/programa/san-rafael.webp" alt="Imagen de San Rafael Arcángel con su corona, el pez y el bastón" width="470" height="840" decoding="async">
+          </span>
+          <figcaption class="programa-santo__texto">
+            <span class="programa-santo__nombre">San Rafael Arcángel</span>
+            <span class="programa-santo__rol">Santo patrono</span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ============ Actividades, día por día ============ -->
+    <section class="programa-actividades" aria-label="Actividades">
+      <!-- Llamado: para qué sirve el filtro -->
+      <p class="programa-filtro__ayuda" id="ayuda-filtro">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3 5h18l-7 8.2V19l-4 2v-7.8L3 5Z"/></svg>
+        Filtra las actividades: toca un día para ver solo las de ese día
+      </p>
+      <!-- Filtro por día (se queda arriba al bajar) -->
+      <nav class="programa-filtro" aria-label="Filtrar actividades por día" aria-describedby="ayuda-filtro" data-programa-nav>
+        <div class="programa-filtro__lista" data-programa-filtro></div>
+      </nav>
+
+      <div class="container programa-contenido" id="hoy">
+        <div class="programa-dias" data-programa-dias></div>
+        <p class="programa-vacio" data-programa-vacio hidden>Muy pronto compartiremos el programa de la feria.</p>
+      </div>
+    </section>
+
+    <!-- ============ Nuestras reinas: solo las candidatas (js/reinas.js) ============ -->
+    <!-- Estilo inspirado en el afiche de coronación: escenario oscuro, luces, fucsia y dorado -->
+    <section class="section section--flores" id="flores" aria-labelledby="titulo-flores">
+      <div class="flores-stage" aria-hidden="true"></div>
+      <div class="flores-luces" aria-hidden="true">
+        <span class="flores-stage__beam flores-stage__beam--1"></span>
+        <span class="flores-stage__beam flores-stage__beam--2"></span>
+        <span class="flores-stage__beam flores-stage__beam--3"></span>
+      </div>
+
+      <div class="container flores-inner">
+        <header class="flores-header">
+          <img class="flores-header__logo" data-revelar="pop" src="assets/img/flores/logo-flor-de-la-feria.webp"
+               alt="Flor de la Feria, Barranco Colorado 2026" width="720" height="720" loading="lazy" decoding="async">
+          <h2 class="flores-header__title" id="titulo-flores">
+            <span class="flores-header__script" data-revelar="escribir" style="--i: 2">Nuestras reinas</span>
+          </h2>
+        </header>
+
+        <!-- Un título y una cuadrícula por grupo (señoritas, niñas…), desde data.js -->
+        <div class="flores-grupos" data-flores></div>
+        <div class="flores-empty" data-flores-empty hidden>
+          <img class="flores-empty__img" data-revelar="pop" src="assets/img/flores/silueta-reina.webp" alt="" width="464" height="500" loading="lazy" decoding="async">
+          <p class="flores-empty__text" data-revelar style="--i: 3">Pronto conocerás a las candidatas a Flor de la Feria 2026.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Agradecimientos: mismo estilo que el final de "Nuestras reinas" ============ -->
+    <section class="programa-gracias" data-programa-gracias aria-labelledby="titulo-gracias" hidden>
+      <div class="container">
+        <h2 class="programa-gracias__titulo" id="titulo-gracias">Agradecimientos especiales</h2>
+
+        <aside class="apoyo" data-programa-apoyo aria-label="Patrocinio" hidden>
+          <span class="apoyo__escudo-marco">
+            <img class="apoyo__escudo" src="assets/img/municipalidad/escudo-san-jorge.webp"
+                 alt="Escudo de la Municipalidad de San Jorge, Zacapa" width="500" height="753" loading="lazy" decoding="async">
+          </span>
+          <div class="apoyo__texto">
+            <p class="apoyo__antes" data-apoyo-campo="antes"></p>
+            <p class="apoyo__nombre" data-apoyo-campo="nombre"></p>
+            <p class="apoyo__despues" data-apoyo-campo="despues"></p>
+            <p class="apoyo__lugar" data-apoyo-campo="lugar"></p>
+          </div>
+        </aside>
+
+        <div data-programa-gracias-box hidden>
+          <ul class="programa-gracias__nombres" data-programa-gracias-lista></ul>
+        </div>
+        <div data-programa-cocode-box hidden>
+          <h3 class="apoyo__antes programa-gracias__subtitulo">Miembros del COCODE</h3>
+          <ul class="programa-gracias__nombres" data-programa-cocode></ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ Pie de página ============ -->
+  <!-- Continúa el escenario de noche de Patrocinadores -->
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div class="site-footer__marca">
+        <img class="site-footer__logo" src="assets/img/logo/logo.webp"
+             alt="Feria Patronal Barranco Colorado 2026" width="1000" height="775" loading="lazy" decoding="async">
+
+        <div class="site-footer__id">
+          <p class="site-footer__name" data-feria="nombre">Feria Patronal Barranco Colorado 2026</p>
+          <p data-feria="lugarCompleto">Barranco Colorado, San Jorge, Zacapa</p>
+          <p class="site-footer__patrono" data-feria="patrono">En honor a San Rafael Arcángel</p>
+        </div>
+
+        <!-- Botón para patrocinar (WhatsApp, desde data.js) -->
+        <a class="btn btn--whatsapp site-footer__patrocinar" data-patrocinar-boton target="_blank" rel="noopener noreferrer" hidden>
+          <svg class="btn__icono" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2c-1.6 0-3.1-.4-4.4-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3Z"/></svg>
+          <span>Quiero ser patrocinador</span>
+        </a>
+
+        <div class="site-footer__links" data-footer-links hidden>
+          <h2 class="site-footer__heading">Síguenos y contáctanos</h2>
+          <ul class="site-footer__list" data-redes></ul>
+          <ul class="site-footer__list" data-contacto></ul>
+        </div>
+      </div>
+
+      <!-- Mapa de Barranco Colorado (coordenadas en data.js) -->
+      <div class="mapa" data-mapa hidden>
+        <h2 class="site-footer__heading">¿Cómo llegar?</h2>
+        <div class="mapa__marco">
+          <iframe class="mapa__iframe" data-mapa-iframe title="Mapa de Barranco Colorado, San Jorge, Zacapa"
+                  loading="lazy" decoding="async" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
+        <a class="site-footer__link mapa__abrir" data-mapa-enlace target="_blank" rel="noopener noreferrer">Abrir en Google Maps</a>
+      </div>
+    </div>
+
+    <div class="container site-footer__bottom">
+      <p class="site-footer__copy">© <span data-feria="anio">2026</span> <span data-feria="nombreCorto">Feria Barranco Colorado</span></p>
+      <a class="site-footer__credito" href="https://albertrujillo.dev/" target="_blank" rel="noopener"
+         aria-label="Hecho con amor por AJ Trujillo Dev (se abre en una pestaña nueva)">
+        <span aria-hidden="true">Hecho con <span class="site-footer__corazon">♥</span> por</span>
+        <img class="site-footer__credito-logo" src="assets/img/credito/trujillo-dev.webp" alt="" width="200" height="200" loading="lazy" decoding="async">
+        <strong aria-hidden="true">AJ Trujillo Dev</strong>
+      </a>
+    </div>
+  </footer>
+
+  <!-- Visor de fotos (se abre al tocar la foto de una reina) -->
+  <dialog class="viewer" data-viewer aria-label="Imagen ampliada">
+    <button class="viewer__close" type="button" data-viewer-close>
+      <span aria-hidden="true">×</span>
+      <span class="sr-only">Cerrar imagen</span>
+    </button>
+    <img class="viewer__img" data-viewer-img alt="">
+    <p class="viewer__caption" data-viewer-caption></p>
+  </dialog>
+</body>
+</html>

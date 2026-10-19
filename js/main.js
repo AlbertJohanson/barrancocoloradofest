@@ -7,6 +7,8 @@
   "use strict";
 
   var DATA = window.FERIA_DATA || {};
+  // Hora actual; js/programa.js permite simularla con ?simular=
+  var ahora = (window.FERIA_PROGRAMA || {}).ahora || Date.now;
 
   /* =========================================================
    * Utilidades
@@ -152,7 +154,7 @@
    * ======================================================= */
 
   function getRemaining(target) {
-    var diff = Math.max(0, target - Date.now());
+    var diff = Math.max(0, target - ahora());
     return {
       total: diff,
       dias: Math.floor(diff / 86400000),
@@ -187,7 +189,7 @@
       nodes.minutos.textContent = pad(r.minutos);
       nodes.segundos.textContent = pad(r.segundos);
       // Sincroniza con el siguiente segundo exacto
-      setTimeout(tick, 1000 - (Date.now() % 1000) + 10);
+      setTimeout(tick, 1000 - (ahora() % 1000) + 10);
     }
 
     tick();
@@ -208,6 +210,53 @@
       $("#titulo-contador").textContent = "¡Llegó el día!";
       done.textContent = config.mensajeFinal || "¡La feria ha comenzado!";
       done.classList.add("is-visible");
+      initPortadaFeria();
+    });
+
+    // Cuenta compacta de la barra fija; al terminar, la bienvenida
+    var barra = $("[data-barra-cuenta]");
+    if (barra) {
+      startCountdown(barra, target, function () {
+        barra.hidden = true;
+        $("[data-barra-bienvenida]").hidden = false;
+      });
+    }
+  }
+
+  /* =========================================================
+   * Portada durante la feria
+   * Al terminar la cuenta regresiva, en días con programa, la portada
+   * pasa a dos columnas (una en teléfonos): logo, mensaje y botón a un
+   * lado; al otro, las actividades de hoy (js/programa.js).
+   * ======================================================= */
+
+  function initPortadaFeria() {
+    var P = window.FERIA_PROGRAMA;
+    var hero = $(".hero");
+    var box = $("[data-hero-hoy]");
+    if (!P || !hero || !box) return;
+
+    var titulo = $("[data-hero-hoy-fecha]", box);
+    var lista = null;
+    var fechaMostrada = null;
+
+    P.cadaMinuto(function () {
+      var dia = P.diaDeHoy();
+      var fecha = dia ? dia.fecha : "";
+      if (fecha !== fechaMostrada) {
+        fechaMostrada = fecha;
+        if (lista) lista.remove();
+        lista = dia ? P.crearAgenda(dia, "h3") : null;
+        if (lista) {
+          titulo.textContent = P.fechaLarga(dia.fecha);
+          box.appendChild(lista);
+        }
+        box.hidden = !dia;
+        hero.classList.toggle("hero--feria", !!dia);
+        var boton = $('[data-accion="actividades"]');
+        if (boton) boton.href = dia ? "programa.html#hoy" : "programa.html";
+      }
+      if (lista) P.marcarEstados(lista);
     });
   }
 
@@ -622,268 +671,61 @@
   }
 
   /* =========================================================
-   * Actividades: adelanto en carrusel (no es el programa oficial)
-   * Tarjetas ordenadas por fecha; las de días pasados se ocultan.
-   * Tocar un afiche lo abre completo en el visor.
+   * Noticias del COCODE: publicaciones de su página de Facebook
+   * con el plugin de página de Meta (iframe, sin el SDK de Facebook).
+   * Se carga solo al acercarse a la pantalla. Sin URL, no se muestra.
    * ======================================================= */
 
-  var DIAS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-  var MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-
-  /** Fecha de hoy en Guatemala, "AAAA-MM-DD" (sin importar la zona del visitante). */
-  function hoyEnGuatemala() {
-    try {
-      return new Date().toLocaleDateString("en-CA", { timeZone: "America/Guatemala" });
-    } catch (e) {
-      return new Date().toISOString().slice(0, 10);
-    }
-  }
-
-  /** "20:00" -> "8:00 p. m." (con espacios que no se cortan). */
-  function formatHora(hora) {
-    var partes = String(hora || "").split(":").map(Number);
-    if (partes.length !== 2 || partes.some(isNaN)) return "";
-    var h = partes[0] % 12 || 12;
-    var sufijo = partes[0] < 12 ? "a. m." : "p. m.";
-    return h + ":" + pad(partes[1]) + " " + sufijo;
-  }
-
-  /** Posición natural de una sección (las fijas de escenas.js engañan a getBoundingClientRect). */
-  function irASeccion(section, suave) {
-    var main = $("#contenido");
-    var top = main.getBoundingClientRect().top + window.scrollY;
-    Array.prototype.some.call(main.children, function (node) {
-      if (node === section) return true;
-      if (node.tagName === "SECTION" && !node.hidden) top += node.offsetHeight;
-      return false;
-    });
-    window.scrollTo({ top: Math.round(top), behavior: suave ? "smooth" : "instant" });
-  }
-
-  function createActividad(item, index, hoy) {
-    var li = el("li", "actividad");
-    li.setAttribute("data-revelar", "pop"); // crece en su lugar: no se sale del carrusel
-    li.style.setProperty("--i", Math.min(index, 3));
-    var partes = item.fecha.split("-").map(Number);
-    var dia = new Date(partes[0], partes[1] - 1, partes[2]);
-
-    // Calendario: día de la semana, número y mes
-    var fecha = el("time", "actividad__fecha");
-    fecha.dateTime = item.fecha + (hasText(item.hora) ? "T" + item.hora : "");
-    fecha.appendChild(el("span", "actividad__fecha-dia", item.fecha === hoy ? "Hoy" : DIAS[dia.getDay()]));
-    fecha.appendChild(el("span", "actividad__fecha-num", String(partes[2])));
-    fecha.appendChild(el("span", "actividad__fecha-mes", MESES[partes[1] - 1]));
-
-    var media;
-    if (hasText(item.afiche)) {
-      media = el("button", "actividad__media");
-      media.type = "button";
-      media.setAttribute("aria-label", "Ver afiche completo: " + item.titulo);
-      var img = createImage({
-        src: item.miniatura || item.afiche,
-        alt: "",
-        width: 480,
-        height: 600,
-        className: "actividad__afiche",
-        lazy: true
-      }, function (failed) {
-        failed.remove();
-        media.classList.add("actividad__media--sin-afiche");
-      });
-      if (hasText(item.encuadre)) img.style.objectPosition = item.encuadre;
-      media.appendChild(img);
-      media.addEventListener("click", function () {
-        openViewer(item.afiche, item.alt || item.titulo, item.titulo, media);
-      });
-    } else {
-      // Sin afiche todavía: tarjeta de color
-      media = el("div", "actividad__media actividad__media--sin-afiche");
-      var nombre = el("span", "actividad__arte-titulo", item.titulo);
-      nombre.setAttribute("aria-hidden", "true"); // el título ya está debajo
-      media.appendChild(nombre);
-      media.appendChild(el("span", "actividad__pronto", "Detalles pronto"));
-    }
-    media.classList.add("actividad__media--tono-" + (index % 3)); // color si no hay afiche
-    media.appendChild(fecha);
-    li.appendChild(media);
-
-    var cuerpo = el("div", "actividad__cuerpo");
-    cuerpo.appendChild(el("h3", "actividad__titulo", item.titulo));
-    var cuando = hasText(item.horaTexto) ? item.horaTexto : formatHora(item.hora);
-    var datos = [cuando, item.lugar].filter(hasText);
-    cuerpo.appendChild(el("p", "actividad__datos", datos.length ? datos.join(" · ") : "Hora y lugar por confirmar"));
-    if (hasText(item.descripcion)) cuerpo.appendChild(el("p", "actividad__texto", item.descripcion));
-    li.appendChild(cuerpo);
-    return li;
-  }
-
-  function renderActividades() {
-    var section = $("#actividades");
-    var data = DATA.actividades || {};
-    if (!section || (DATA.secciones || {}).actividades === false) return;
-
-    var hoy = hoyEnGuatemala();
-    var items = (Array.isArray(data.lista) ? data.lista : [])
-      .filter(function (item) {
-        return item && hasText(item.titulo) && /^\d{4}-\d{2}-\d{2}$/.test(String(item.fecha)) && item.fecha >= hoy;
-      })
-      .sort(function (a, b) {
-        return (a.fecha + (a.hora || "12:00")).localeCompare(b.fecha + (b.hora || "12:00"));
-      });
-    if (!items.length) {
+  function renderCocode() {
+    var section = $("#noticias");
+    var data = DATA.cocode || {};
+    var url = safeUrl(data.url);
+    if (!section) return;
+    if (!url) {
       section.setAttribute("data-vacia", ""); // applySectionVisibility la oculta
       return;
     }
 
-    var nota = $("[data-actividades-nota]", section);
-    if (hasText(data.nota)) nota.textContent = data.nota;
-    else nota.remove();
-    if (hasText(data.aviso)) {
-      $("[data-actividades-aviso-texto]", section).textContent = data.aviso;
-      $("[data-actividades-aviso]", section).hidden = false;
+    var texto = $("[data-cocode-texto]", section);
+    if (hasText(data.texto)) texto.textContent = data.texto;
+    else texto.remove();
+    var enlace = $("[data-cocode-enlace]", section);
+    enlace.href = url;
+    enlace.setAttribute("aria-label", "Ver la página de " + (data.nombre || "COCODE") + " en Facebook (se abre en una pestaña nueva)");
+
+    var marco = $("[data-cocode-marco]", section);
+    function cargar() {
+      // El plugin acepta de 180 a 500 px de ancho
+      var ancho = Math.max(180, Math.min(500, Math.floor(marco.clientWidth)));
+      var alto = window.innerWidth < 640 ? 620 : 720;
+      var iframe = document.createElement("iframe");
+      iframe.className = "cocode__iframe";
+      iframe.title = "Publicaciones de " + (data.nombre || "COCODE") + " en Facebook";
+      iframe.width = ancho;
+      iframe.height = alto;
+      iframe.loading = "lazy";
+      iframe.setAttribute("scrolling", "no");
+      iframe.setAttribute("allow", "clipboard-write; encrypted-media; picture-in-picture; web-share");
+      iframe.src = "https://www.facebook.com/plugins/page.php?href=" + encodeURIComponent(url) +
+        "&tabs=timeline&width=" + ancho + "&height=" + alto +
+        "&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false";
+      marco.style.setProperty("--alto", alto + "px");
+      marco.appendChild(iframe);
+      marco.classList.add("is-cargado");
     }
 
-    var lista = $("[data-actividades]", section);
-    items.forEach(function (item, i) { lista.appendChild(createActividad(item, i, hoy)); });
-
-    // Flechas (solo con ratón): avanzan casi una pantalla de tarjetas
-    var flechas = section.querySelectorAll("[data-actividades-flecha]");
-    function actualizarFlechas() {
-      var max = lista.scrollWidth - lista.clientWidth - 2;
-      flechas[0].disabled = lista.scrollLeft <= 2;
-      flechas[1].disabled = lista.scrollLeft >= max;
+    if ("IntersectionObserver" in window) {
+      var io = new IntersectionObserver(function (entradas) {
+        if (!entradas[0].isIntersecting) return;
+        io.disconnect();
+        cargar();
+      }, { rootMargin: "400px 0px" });
+      io.observe(marco);
+    } else {
+      cargar();
     }
-    flechas.forEach(function (flecha) {
-      flecha.hidden = false;
-      flecha.addEventListener("click", function () {
-        var paso = Number(flecha.getAttribute("data-actividades-flecha"));
-        lista.scrollBy({ left: paso * lista.clientWidth * 0.85, behavior: "smooth" });
-      });
-    });
-    var pendiente = false;
-    lista.addEventListener("scroll", function () {
-      if (pendiente) return;
-      pendiente = true;
-      window.requestAnimationFrame(function () {
-        pendiente = false;
-        actualizarFlechas();
-      });
-    }, { passive: true });
-    window.requestAnimationFrame(actualizarFlechas);
-    window.addEventListener("resize", actualizarFlechas);
   }
 
-  /** Botón "Ver actividades" de la portada. */
-  function initBotonActividades() {
-    var boton = $('[data-accion="actividades"]');
-    var section = $("#actividades");
-    if (!boton) return;
-    if (!section || section.hidden) {
-      boton.hidden = true;
-      return;
-    }
-    boton.addEventListener("click", function () { irASeccion(section, true); });
-  }
-
-  /* =========================================================
-   * Noticias
-   * ======================================================= */
-
-  function getPublishedNews() {
-    var list = Array.isArray(DATA.noticias) ? DATA.noticias : [];
-    return list
-      .filter(function (item) { return item && item.publicado === true && hasText(item.titulo); })
-      .sort(function (a, b) {
-        return String(b.fechaPublicacion || "").localeCompare(String(a.fechaPublicacion || ""));
-      });
-  }
-
-  function createNewsCard(item) {
-    var card = el("article", "news-card");
-
-    if (hasText(item.imagen)) {
-      var figure = el("figure", "news-card__media");
-      var button = el("button", "news-card__zoom");
-      button.type = "button";
-      button.setAttribute("aria-label", "Ampliar imagen: " + item.titulo);
-
-      var img = createImage({
-        src: item.imagen,
-        alt: item.alt || "",
-        width: 800,
-        height: 1000,
-        lazy: true
-      }, function () { figure.remove(); });
-
-      button.appendChild(img);
-      button.addEventListener("click", function () {
-        openViewer(img.currentSrc || img.src, item.alt || "", item.titulo, button);
-      });
-      figure.appendChild(button);
-      card.appendChild(figure);
-    }
-
-    var body = el("div", "news-card__body");
-    var dateText = formatDate(item.fechaPublicacion);
-    if (dateText) {
-      var meta = el("p", "news-card__date", "Publicado el ");
-      var time = el("time", "", dateText);
-      time.dateTime = item.fechaPublicacion;
-      meta.appendChild(time);
-      body.appendChild(meta);
-    }
-    body.appendChild(el("h3", "news-card__title", item.titulo));
-    if (hasText(item.descripcion)) body.appendChild(el("p", "news-card__text", item.descripcion));
-
-    card.appendChild(body);
-    return card;
-  }
-
-  function renderNoticias() {
-    var grid = $("[data-noticias]");
-    var items = getPublishedNews();
-    $("[data-noticias-empty]").hidden = items.length > 0;
-    items.forEach(function (item) { grid.appendChild(createNewsCard(item)); });
-  }
-
-  /* =========================================================
-   * Visor de afiches (dialog nativo: Escape lo cierra)
-   * ======================================================= */
-
-  var viewer = { dialog: null, trigger: null };
-
-  function initViewer() {
-    var dialog = $("[data-viewer]");
-    if (!dialog || typeof dialog.showModal !== "function") return;
-    viewer.dialog = dialog;
-
-    $("[data-viewer-close]", dialog).addEventListener("click", function () { dialog.close(); });
-
-    // Clic fuera de la imagen (en el fondo) cierra
-    dialog.addEventListener("click", function (event) {
-      if (event.target === dialog) dialog.close();
-    });
-
-    dialog.addEventListener("close", function () {
-      document.body.classList.remove("no-scroll");
-      if (viewer.trigger) viewer.trigger.focus();
-    });
-  }
-
-  function openViewer(src, alt, caption, trigger) {
-    if (!viewer.dialog) {
-      window.open(src, "_blank", "noopener"); // navegadores sin <dialog>
-      return;
-    }
-    var img = $("[data-viewer-img]", viewer.dialog);
-    img.src = src;
-    img.alt = alt;
-    $("[data-viewer-caption]", viewer.dialog).textContent = caption || "";
-    viewer.trigger = trigger;
-    document.body.classList.add("no-scroll");
-    viewer.dialog.showModal();
-    $("[data-viewer-close]", viewer.dialog).focus();
-  }
 
   /* =========================================================
    * Flores de la Feria: agradecimiento a la municipalidad
@@ -910,122 +752,6 @@
       marco.remove();
     }
     box.hidden = false;
-  }
-
-  /* =========================================================
-   * Flores de la Feria: candidatas
-   * Tarjeta con marco dorado y banda fucsia, como en el afiche.
-   * ======================================================= */
-
-  var SILUETA = "assets/img/flores/silueta-reina.webp";
-
-  // Corona dorada con joyas fucsia (decorativa), para las ya coronadas
-  var CORONA_SVG =
-    '<svg viewBox="0 0 120 80" aria-hidden="true" focusable="false">' +
-      '<defs><linearGradient id="corona-oro" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0" stop-color="#FFE9A3"/><stop offset=".5" stop-color="#FFC93C"/><stop offset="1" stop-color="#C98A0B"/>' +
-      '</linearGradient></defs>' +
-      '<path d="M10 66 4 22l28 22L60 6l28 38 28-22-6 44Z" fill="url(#corona-oro)" stroke="#8A5A00" stroke-width="2" stroke-linejoin="round"/>' +
-      '<rect x="10" y="62" width="100" height="12" rx="3" fill="url(#corona-oro)" stroke="#8A5A00" stroke-width="2"/>' +
-      '<circle cx="4" cy="20" r="5" fill="#FF2E9A"/><circle cx="60" cy="6" r="6" fill="#FF2E9A"/><circle cx="116" cy="20" r="5" fill="#FF2E9A"/>' +
-      '<circle cx="35" cy="68" r="3.5" fill="#E6007E"/><circle cx="60" cy="68" r="4" fill="#00BCEB"/><circle cx="85" cy="68" r="3.5" fill="#E6007E"/>' +
-      '<path d="M60 30 66 44 60 56 54 44Z" fill="#FF2E9A" stroke="#FFE9A3" stroke-width="1.5"/>' +
-    '</svg>';
-
-  function createFlorCard(item, index) {
-    var card = el("article", "flor-card");
-    card.setAttribute("data-revelar", "voltear");
-    card.style.setProperty("--i", index);
-    var figure = el("figure", "flor-card__media");
-
-    function showPlaceholder() {
-      figure.classList.add("is-placeholder");
-      figure.appendChild(createImage({ src: SILUETA, alt: "", width: 464, height: 500, lazy: true }, function (failed) {
-        failed.remove();
-      }));
-    }
-
-    if (hasText(item.foto)) {
-      // La foto se amplía al tocarla, como los afiches
-      var zoom = el("button", "flor-card__zoom");
-      zoom.type = "button";
-      zoom.setAttribute("aria-label", "Ampliar fotografía de " + item.nombre);
-      var img = createImage({
-        src: item.foto,
-        alt: item.alt || ("Fotografía de " + item.nombre),
-        width: 800,
-        height: 1200,
-        lazy: true
-      }, function () { zoom.remove(); showPlaceholder(); });
-      if (hasText(item.encuadre)) img.style.objectPosition = item.encuadre;
-      zoom.appendChild(img);
-      zoom.addEventListener("click", function () {
-        openViewer(img.currentSrc || img.src, img.alt, item.nombre, zoom);
-      });
-      figure.appendChild(zoom);
-    } else {
-      showPlaceholder();
-    }
-
-    card.appendChild(figure);
-    if (hasText(item.titulo)) card.appendChild(el("p", "flor-card__sash", item.titulo));
-
-    var body = el("div", "flor-card__body");
-    body.appendChild(el("h4", "flor-card__name", item.nombre));
-    if (hasText(item.descripcion)) body.appendChild(el("p", "flor-card__text", item.descripcion));
-    card.appendChild(body);
-    if (!hasText(item.corona)) return card;
-
-    // Ya coronada: corona y título encima de la tarjeta
-    var wrap = el("div", "flor-coronada");
-    var corona = el("span", "flor-coronada__corona");
-    corona.setAttribute("data-revelar", "columpio");
-    corona.style.setProperty("--i", index);
-    corona.innerHTML = CORONA_SVG;
-    var titulo = el("p", "flor-coronada__titulo", item.corona);
-    titulo.setAttribute("data-revelar", "escribir");
-    titulo.style.setProperty("--i", index + 1);
-    card.style.setProperty("--i", index + 2);
-    wrap.appendChild(corona);
-    wrap.appendChild(titulo);
-    wrap.appendChild(card);
-    return wrap;
-  }
-
-  /** Un título y una cuadrícula por grupo; los grupos sin candidatas no se muestran. */
-  function renderFlores() {
-    var container = $("[data-flores]");
-    var list = Array.isArray(DATA.flores) ? DATA.flores : [];
-    var items = list.filter(function (item) {
-      return item && item.publicado !== false && hasText(item.nombre);
-    });
-    var grupos = (Array.isArray(DATA.floresGrupos) ? DATA.floresGrupos : []).filter(function (g) {
-      return g && hasText(g.id);
-    });
-    if (!grupos.length) grupos = [{ id: "", titulo: "" }];
-    var ids = grupos.map(function (g) { return g.id; });
-
-    grupos.forEach(function (grupo, index) {
-      // Sin grupo (o con uno desconocido): va en el primero
-      var miembros = items.filter(function (item) {
-        return item.grupo === grupo.id || (index === 0 && ids.indexOf(item.grupo) === -1);
-      });
-      if (!miembros.length) return;
-
-      var section = el("section", "flores-grupo");
-      if (hasText(grupo.titulo)) {
-        var title = el("h3", "flores-subtitle", grupo.titulo);
-        title.setAttribute("data-revelar", "escribir");
-        section.appendChild(title);
-      }
-      var grid = el("div", "flores-grid");
-      miembros.forEach(function (item, i) { grid.appendChild(createFlorCard(item, i)); });
-      section.appendChild(grid);
-      container.appendChild(section);
-    });
-
-    $("[data-flores-empty]").hidden = items.length > 0;
-    container.hidden = items.length === 0;
   }
 
   /* =========================================================
@@ -1083,92 +809,22 @@
   }
 
   /* =========================================================
-   * Invitación a patrocinar (botón a WhatsApp)
+   * Invitación a patrocinar (franja con botón a WhatsApp)
+   * El enlace del botón lo pone js/pie.js, igual que el del pie.
    * ======================================================= */
 
   function renderPatrocinar() {
     var box = $("[data-patrocinar]");
     var data = DATA.patrocinar || {};
-    var numero = String((DATA.contacto || {}).whatsapp || "").replace(/\D/g, "");
-    if (!box || !numero) return;
+    var boton = box && $("[data-patrocinar-boton]", box);
+    if (!box || !boton || !boton.href) return; // sin número de WhatsApp
 
     box.querySelectorAll("[data-patrocinar-campo]").forEach(function (campo) {
       var texto = data[campo.getAttribute("data-patrocinar-campo")];
       campo.textContent = hasText(texto) ? texto : "";
       campo.hidden = !hasText(texto);
     });
-
-    var url = "https://wa.me/" + numero;
-    if (hasText(data.mensaje)) url += "?text=" + encodeURIComponent(data.mensaje.trim());
-    // Botón de la franja y botón del pie de página
-    document.querySelectorAll("[data-patrocinar-boton]").forEach(function (boton) {
-      boton.href = url;
-      boton.setAttribute("aria-label", boton.textContent.trim() + " por WhatsApp (se abre en una pestaña nueva)");
-      boton.hidden = false;
-    });
     box.hidden = false;
-  }
-
-  /* =========================================================
-   * Mapa de Barranco Colorado (pie de página)
-   * ======================================================= */
-
-  function renderMapa() {
-    var box = $("[data-mapa]");
-    var ubicacion = DATA.ubicacion || {};
-    var lat = Number(ubicacion.lat);
-    var lng = Number(ubicacion.lng);
-    if (!box || !ubicacion.lat || !ubicacion.lng || !isFinite(lat) || !isFinite(lng)) return;
-
-    var punto = lat + "," + lng;
-    var zoom = Number(ubicacion.zoom) || 14;
-    $("[data-mapa-iframe]").src = "https://maps.google.com/maps?q=" + punto + "&z=" + zoom + "&output=embed";
-    $("[data-mapa-enlace]").href = "https://www.google.com/maps/search/?api=1&query=" + punto;
-    box.hidden = false;
-  }
-
-  /* =========================================================
-   * Pie de página: redes y contacto
-   * ======================================================= */
-
-  function createLinkItem(label, href, external) {
-    var li = el("li");
-    var a = el("a", "site-footer__link", label);
-    a.href = href;
-    if (external) {
-      a.target = "_blank";
-      a.rel = "noopener noreferrer";
-    }
-    li.appendChild(a);
-    return li;
-  }
-
-  function renderFooter() {
-    var redesList = $("[data-redes]");
-    var contactoList = $("[data-contacto]");
-    var contacto = DATA.contacto || {};
-    var redes = Array.isArray(DATA.redes) ? DATA.redes : [];
-
-    redes.forEach(function (red) {
-      var url = safeUrl(red && red.url);
-      if (url && hasText(red.nombre)) redesList.appendChild(createLinkItem(red.nombre, url, true));
-    });
-
-    if (hasText(contacto.telefono)) {
-      var tel = contacto.telefono.replace(/[^\d+]/g, "");
-      contactoList.appendChild(createLinkItem("Tel. " + contacto.telefono, "tel:" + tel, false));
-    }
-    if (hasText(contacto.whatsapp)) {
-      var wa = contacto.whatsapp.replace(/\D/g, "");
-      contactoList.appendChild(createLinkItem("WhatsApp", "https://wa.me/" + wa, true));
-    }
-    if (hasText(contacto.correo)) {
-      contactoList.appendChild(createLinkItem(contacto.correo, "mailto:" + contacto.correo.trim(), false));
-    }
-
-    redesList.hidden = !redesList.children.length;
-    contactoList.hidden = !contactoList.children.length;
-    $("[data-footer-links]").hidden = !redesList.children.length && !contactoList.children.length;
   }
 
   /* =========================================================
@@ -1180,7 +836,7 @@
   function applySectionVisibility() {
     var config = DATA.secciones || {};
     var first = null;
-    ["actividades", "evento", "noticias", "flores", "patrocinadores"].forEach(function (id) {
+    ["evento", "noticias", "flores", "patrocinadores"].forEach(function (id) {
       var section = document.getElementById(id);
       if (!section) return;
       section.hidden = config[id] === false || section.hasAttribute("data-vacia");
@@ -1209,9 +865,14 @@
    * el navegador no salta por su cuenta.
    * ======================================================= */
 
-  var ENLACES = { "#reinas": "flores", "#concierto": "evento", "#baile": "evento", "#actividades": "actividades" };
+  var ENLACES = { "#reinas": "flores", "#concierto": "evento", "#baile": "evento" };
 
   function initEnlaceDirecto() {
+    // El carrusel de actividades se quitó: su enlace lleva al programa
+    if (/^#(actividades|programa)$/i.test(location.hash)) {
+      location.replace("programa.html");
+      return;
+    }
     var id = ENLACES[decodeURIComponent(location.hash).toLowerCase()];
     var section = id && document.getElementById(id);
     if (!section || section.hidden) return;
@@ -1243,19 +904,38 @@
     renderLogo();
     initSlides();
     initCountdown();
-    initViewer();
     renderEvento();
-    renderActividades();
     applySectionVisibility();
-    initBotonActividades();
-    renderNoticias();
+    renderCocode();
     renderApoyo();
-    renderFlores();
     renderPatrocinadores();
     renderPatrocinar();
-    renderMapa();
-    renderFooter();
     initEnlaceDirecto();
+    initBarraSitio();
+  }
+
+  /**
+   * Barra fija con el logo y el botón al programa: aparece cuando la
+   * portada sale de la pantalla (IntersectionObserver, sin escuchar el
+   * desplazamiento) y se esconde al volver arriba.
+   */
+  function initBarraSitio() {
+    var barra = $("[data-barra-sitio]");
+    var marca = $("[data-portada-sentinela]");
+    if (!barra) return;
+    if (!marca || !("IntersectionObserver" in window)) {
+      barra.classList.add("is-visible");
+      return;
+    }
+    new IntersectionObserver(function (entradas) {
+      barra.classList.toggle("is-visible", !entradas[0].isIntersecting);
+    }).observe(marca);
+
+    // El logo vuelve arriba (las escenas fijas confunden el salto nativo)
+    $(".barra-sitio__logo", barra).addEventListener("click", function (event) {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
   }
 
   init();

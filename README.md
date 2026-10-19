@@ -7,10 +7,16 @@ Hecho solo con HTML, CSS y JavaScript, sin frameworks ni instalación.
 ## Estructura
 
 ```
-index.html                 Página
+index.html                 Página principal
+programa.html              Programa oficial, día por día
 css/styles.css             Estilos
 js/data.js                 ← CONTENIDO Y CONFIGURACIÓN (lo único que se edita)
 js/main.js                 Lógica: contador y generación de secciones
+js/programa.js             Programa: "Hoy en la feria" (portada) y página del programa
+js/figuras.js              Dibujos de San Rafael y la iglesia para los fuegos artificiales
+js/fuegos.js               Fuegos pequeños del programa (San Rafael y la iglesia)
+js/pie.js                  Pie de página (portada y programa): patrocinar, redes, contacto y mapa
+js/reinas.js               "Nuestras reinas" (portada y programa) y visor de fotos y afiches
 js/intro.js                Presentación con fuegos artificiales de la portada
 js/escenas.js              Transición entre secciones al desplazarse
 assets/img/logo/           Logo de la feria
@@ -61,9 +67,23 @@ portada: {
 - `encuadre` define qué parte de la foto se prioriza en pantallas angostas: posición horizontal y vertical.
 - Con "reducir movimiento" activado, se muestra solo la primera foto, fija.
 
+## Barra fija de la portada
+
+Al bajar de la portada aparece arriba una pastilla (15 px de relleno) con el logo de la feria, la **cuenta regresiva** compacta (la misma hora de `cuentaRegresiva.fechaObjetivo`) y el botón dorado **"Ver programa"** (`programa.html`); al volver arriba se esconde. Cuando termina el conteo, en lugar de la cuenta dice **"¡Bienvenido a Barranco Colorado!"** en cursiva dorada (se edita en `index.html`, `data-barra-bienvenida`). Tocar el logo regresa al inicio. Se decide con `IntersectionObserver` (sin escuchar el desplazamiento) y solo se anima `transform`. Está en `index.html` (`.barra-sitio`) y `initBarraSitio()` en `main.js`.
+
 ## Botón "Ver actividades"
 
-Lleva a la sección "Lo que se viene" (ver **Actividades** más abajo). Si esa sección está oculta, el botón tampoco se muestra.
+Es un enlace al programa (`programa.html`). Durante la feria abre en el día de hoy (`programa.html#hoy`).
+
+## Portada durante la feria
+
+Cuando termina la cuenta regresiva y hoy hay actividades en el programa, la portada cambia:
+
+- **Teléfonos (una columna):** logo, el mensaje "¡La feria ha comenzado, acompáñanos!" (con el estilo del contador; se edita en `cuentaRegresiva.mensajeFinal`), el botón "Ver actividades" y debajo el recuadro **Hoy en la feria** con las actividades del día.
+- **Desde 900 px (dos columnas):** logo, mensaje y botón a la izquierda; las actividades de hoy a la derecha.
+- La fecha "Inicia el 21 de octubre" se oculta.
+- En la agenda de hoy, la actividad que empezó hace menos de 2 horas lleva **Ahora**, la siguiente **A continuación** y las anteriores se atenúan. Se actualiza cada minuto y cambia sola de día.
+- Si la página está abierta cuando termina el conteo, cambia en ese momento. Los días sin programa (antes o después de la feria) la portada queda como siempre.
 
 ## Presentación con fuegos artificiales
 
@@ -80,6 +100,76 @@ Al pie de la portada, el indicador "Desliza" con una flecha animada lleva a la p
 - Si el dispositivo tiene activado "reducir movimiento", el logo y el contador se muestran directamente.
 - Los fuegos se pausan cuando la portada no está en pantalla.
 - Los tiempos, colores y el tamaño de las figuras se ajustan en la sección "Configuración" de `intro.js`. El orden de las figuras está en la lista `FIGURAS`.
+
+## Programa oficial (`programa.html`)
+
+Página propia con todas las actividades de la semana, tomada del programa oficial de la Municipalidad de San Jorge. Se edita en `programa` (`data.js`). Enlace directo: https://barrancocoloradofest.com/programa.html (el enlace anterior `#actividades` de la portada lleva aquí).
+
+**Colores:** la cabecera y toda la sección de actividades usan el azul de la portada de inicio (`#0A3CB0` de base con el brillo `#1466F5` arriba; el filtro de días en `--marino`) con filetes dorados; "Nuestras reinas", los agradecimientos y el pie conservan la noche morada y fucsia, igual que en inicio.
+
+**Letras:** títulos en **Cinzel** (como "FERIA PATRONAL" del afiche; se carga solo en esta página) y los textos (detalles de cada actividad, lugar de la cabecera) en la cursiva de los nombres de los agradecimientos (Kaushan Script), un poco más grande para leerse bien.
+
+**Desplazamiento como en la portada (`js/escenas.js`):** la cabecera, las actividades y los agradecimientos son escenas: cada una se queda fija y la siguiente sube encima como una hoja curva, mientras la de atrás se oscurece. La cabecera no se oscurece (se quitó su velo en `styles.css`, `.programa-portada > .escena__velo`); solo se aleja un poco. Las tarjetas y los títulos de cada día aparecen al llegar a la pantalla. Lo que se aleja en la primera escena se marca con `data-escena-contenido` (en la portada de inicio es `.hero__inner`).
+
+**Nuestras reinas:** entre las actividades y los agradecimientos, la misma sección de la portada (logo de Flor de la Feria y las candidatas por grupo, con corona y título), pero sin la franja de agradecimiento a la municipalidad. Las dos páginas la arman con `js/reinas.js` desde `flores` y `floresGrupos` en `data.js`; tocar una foto la amplía.
+
+**Serenata a nuestras reinas:** lleva la foto de la Flor de la Feria (`assets/img/programa/flor-de-la-feria.webp`, recortada de su foto oficial) con la etiqueta "Nuestras reinas" en lugar de "Actividad principal" (campo `etiqueta`). Las fotos casi cuadradas se muestran con alto limitado y, en escritorio, más angostas que los banners.
+
+**Pie de página:** el mismo de la portada (logo, "Quiero ser patrocinador", redes, contacto y mapa), que arma `js/pie.js` en las dos páginas.
+
+- **Cabecera:** la foto de la iglesia de fondo (`assets/img/portada/iglesia.webp`) con una capa azul, "Programa oficial", las fechas (`programa.fechasTexto`) y **San Rafael Arcángel** en un arco dorado (recortado de la portada del programa: `assets/img/programa/san-rafael.webp`).
+- **Filtro por día:** botones "Toda la semana", "Mié 21"… que se quedan arriba al bajar. Antes y después de la feria abre en "Toda la semana"; durante la feria abre en **hoy** (el botón lleva la marca "Hoy" y los días pasados se atenúan). Cada día tiene enlace propio: `programa.html#dia-2026-10-24`.
+- **Tarjetas en cuadrícula:** una columna en teléfonos y dos desde 640 px. Una tarjeta que quedaría sola en su fila ocupa todo el ancho, para no dejar huecos sin cambiar el orden por hora.
+- **Actividades principales:** las que tienen `imagen` van en una tarjeta grande con borde dorado, la etiqueta "Actividad principal" y su banner. Los banners de los grupos y del desfile hípico están recortados del programa oficial (`assets/img/programa/`); la procesión usa la foto del altar de San Rafael. Desde 900 px, los banners muy anchos van arriba y los demás a un lado.
+- **Hoy:** en las tarjetas del día, **Ahora** (fucsia) y **A continuación**; las anteriores se atenúan.
+- **Agradecimientos especiales:** al final, con el estilo del cierre de "Nuestras reinas": la franja con el escudo para el alcalde, el Concejo Municipal y la Municipalidad (`programa.patrocinio`) y los demás nombres en cursiva dorada (`programa.agradecimientos` y `programa.cocode`).
+
+### Neón de San Rafael y la iglesia (`js/neon.js`)
+
+A los lados de las actividades flotan San Rafael y la iglesia en contorno de neón (celeste, dorado y fucsia), alternando lado y figura de arriba abajo. Son los mismos dibujos de los fuegos (`js/figuras.js`): se toman sus bordes y el brillo se pinta una sola vez en un lienzo.
+
+- Se encienden con un parpadeo al llegar a la pantalla y luego flotan suavemente (solo `transform`; en pausa cuando la sección no se ve).
+- Desde 1180 px van en el centro de los márgenes; en pantallas más angostas quedan en los bordes, tenues y detrás de las tarjetas.
+- La cantidad depende del alto de la sección (una cada ~650 px), así que se ajusta al filtrar por día. Figuras, tamaños y colores en `MODELOS`.
+- Con "reducir movimiento" se ven fijas.
+
+**Filtro de días:** encima va el llamado "Filtra las actividades: toca un día para ver solo las de ese día". Al inicio es una pastilla redondeada; cuando queda fija arriba al bajar, se vuelve una barra normal de lado a lado, sin esquinas (`programa.js` pone `.is-fija`), y vuelve a ser pastilla al subir.
+
+### Fuegos pequeños y animaciones (`js/fuegos.js`)
+
+- **Cabecera:** al abrir la página suben dos cohetes que estallan y forman, en chiquito, a **San Rafael** y **la iglesia** a los lados del arco (en escritorio, entre el título y el arco). Se quedan titilando un momento, se deshacen en chispas y siguen tres fuegos normales. Tocar el arco de San Rafael lanza otro.
+- **Agradecimientos:** cuando el título llega a la pantalla se escribe de izquierda a derecha y estallan la iglesia y San Rafael a sus lados (en teléfonos, la iglesia sobre el título). La franja del escudo sube, el escudo crece con rebote, "Lic. David Trujillo" se escribe, "SAN JORGE" aparece al final y los nombres van apareciendo uno tras otro.
+- Son los mismos dibujos de la presentación de la portada (`js/figuras.js`), así que si se cambia un dibujo, cambia en los dos lugares.
+- **Rendimiento:** todo ocurre una sola vez. El lienzo de los fuegos está detrás del texto, se pausa fuera de pantalla, tiene un límite de chispas y se oculta al terminar. Las apariciones usan solo `opacity`, `transform` y `clip-path`. Con "reducir movimiento" no hay fuegos ni animaciones.
+- Tamaños, tiempos y lugares se ajustan en la sección "Configuración" y en `lugares()` de `fuegos.js`.
+
+Cada actividad:
+
+```js
+{
+  hora: "20:00",           // 24 h. Medianoche = "24:00" (queda al final de ese día)
+  titulo: "Gran concierto internacional",
+  detalle: "Con Los Caminantes, …",                 // opcional
+  icono: "musica",         // desfile, discurso, musica, marimba, corona, iglesia,
+                           // ninos, moto, fuegos, cafe, caballo, cena
+  destacado: true,         // opcional: ícono dorado en "Hoy en la feria" de la portada
+  etiqueta: "Nuestras reinas", // opcional: texto sobre el título de una principal
+  imagen: { ruta: "assets/img/programa/concierto-internacional.webp", ancho: 892, alto: 166, alt: "…" },
+                           // opcional: la vuelve actividad principal (ancho y alto reales)
+  enlace: { texto: "Entradas y localidades", url: "./#concierto" } // opcional
+}
+```
+
+- Las actividades se ordenan solas por hora.
+- **Cambio de día:** hasta `programa.cambioDeDia` (ahora 5:00 a. m.) se sigue mostrando el día anterior, para que la serenata de medianoche siga en "Hoy".
+- Toda la hora se calcula en hora de Guatemala, sin importar la zona del visitante.
+
+**Para probar cómo se ve un día de feria**, agrega `?simular=` a la dirección con la fecha y hora de Guatemala; afecta a la portada, al contador y al programa:
+
+- `index.html?simular=2026-10-21T19:50` → portada de feria, "Acto de inauguración" en **Ahora**.
+- `programa.html?simular=2026-10-22T00:30` → todavía es el miércoles: la serenata a las reinas en **Ahora**.
+
+Los afiches del antiguo carrusel siguen en `assets/img/actividades/` por si se quieren volver a usar; ya no se cargan en el sitio.
 
 ## Hora del contador ⚠️
 
@@ -126,14 +216,14 @@ En cada tarjeta, la banda "Candidata" se despliega, un destello dorado cruza la 
 En `data.js`, `secciones` activa o desactiva cada sección sin borrar su contenido:
 
 ```js
-secciones: { evento: true, actividades: true, noticias: false, flores: true, patrocinadores: true }
+secciones: { evento: true, noticias: true, flores: true, patrocinadores: true }
 ```
 
-Ahora **Noticias está oculta**. El indicador "Desliza" de la portada lleva siempre a la primera sección visible.
+El indicador "Desliza" de la portada lleva siempre a la primera sección visible.
 
 ## Gran concierto (evento destacado)
 
-Sección después de las actividades, con estilo de fuego tomado del logo del grupo. Todo se edita en `evento` (`data.js`); si falta el logo o la fecha, la sección no se muestra.
+Sección después de la portada, con estilo de fuego tomado del logo del grupo. Todo se edita en `evento` (`data.js`); si falta el logo o la fecha, la sección no se muestra.
 
 - **Grupos:** logo del grupo principal + `pais` (`"mx"` o `"gt"`, muestra bandera y nombre). `invitados`: nombre, país y logo. Si un logo no carga, se muestra el nombre en texto.
 - **Cuenta regresiva propia:** apunta a `fecha` (con `-06:00`). Usa clases distintas a las de la portada (`evento-reloj`) para no heredar la animación de la presentación.
@@ -143,42 +233,22 @@ Sección después de las actividades, con estilo de fuego tomado del logo del gr
 - **Mapa de localidades:** plano interactivo dibujado en SVG desde `localidades` (según el plano del organizador): escenario, bocinas, mesas VIP a ambos lados del pasillo y General 1 / General 2. Tocar una zona o mesa muestra nombre, precio y descripción; los botones de zona sirven también con teclado. `mesasIzquierda` / `mesasDerecha` son las filas de mesas (8 por fila, la primera junto al escenario); `0` = mesa sin número. En teléfonos el plano se desplaza de lado y empieza centrado en el escenario.
 - **Logos:** `assets/img/evento/`. Se recortaron del video promocional (no hay versiones oficiales en internet); conviene reemplazarlos por los originales si el organizador los consigue.
 
-## Actividades: "Lo que se viene"
+## Noticias del COCODE
 
-Adelanto de algunas actividades (no es el programa oficial), en un carrusel que se desliza de lado, justo después de la portada. Mismo estilo que la portada (noche azul, cinta fucsia, dorado), con un aviso de que el programa oficial está en preparación (`aviso`). Se edita en `actividades.lista` (`data.js`).
-
-- Orden automático por `fecha` y `hora`; las de días ya pasados (hora de Guatemala) se ocultan solas. Si no queda ninguna, la sección no se muestra.
-- Con afiche: la tarjeta usa `miniatura` (liviana, recortada con `encuadre`) y al tocarla abre `afiche` completo en el visor.
-- Sin afiche: tarjeta de color con el nombre y "Detalles pronto". Sin hora ni lugar: "Hora y lugar por confirmar".
-- El gran concierto no va en la lista: tiene su propia sección.
-- Afiches en `assets/img/actividades/` (completo ~200–360 KB; miniatura `-mini` ~100 KB).
-- El botón "Ver actividades" de la portada lleva a esta sección (si está oculta, el botón también). Enlace directo: `#actividades`.
-
-## Noticias
-
-Copia las imágenes a `assets/img/noticias/` y agrega registros al arreglo `noticias`.
-
-**Ejemplo, no es contenido real:**
+Sección después del gran concierto con las publicaciones de la página de Facebook del COCODE (**Cocode Barranco Colorado 2025**), usando el plugin de página de Meta (Page Plugin) en su versión de iframe: no carga el SDK de Facebook en el resto del sitio. Se edita en `cocode` (`data.js`):
 
 ```js
-noticias: [
-  {
-    id: "noticia-001",
-    titulo: "Título de la noticia",
-    descripcion: "Resumen breve de una o dos oraciones.",
-    fechaPublicacion: "2026-10-01",
-    imagen: "assets/img/noticias/afiche-001.jpg", // opcional
-    alt: "Descripción del afiche",
-    publicado: true
-  }
-]
+cocode: {
+  nombre: "COCODE Barranco Colorado",
+  url: "https://www.facebook.com/profile.php?id=61576769459995",
+  texto: "Avisos y novedades de nuestra comunidad, directo desde la página del COCODE."
+}
 ```
 
-- **Ordenar:** las noticias se ordenan solas por `fechaPublicacion`, de la más reciente a la más antigua.
-- **Ocultar:** cambia `publicado` a `false`. No hace falta borrar el registro.
-- **Editar:** cambia los textos y guarda.
-- **Afiches:** se muestran completos, sin recortes. Al hacer clic o presionar Enter se amplían; se cierran con Escape.
-- Si no hay noticias publicadas, se muestra "Pronto compartiremos las novedades de nuestra feria".
+- El plugin se agrega solo cuando la sección se acerca a la pantalla. Mide entre 180 y 500 px de ancho (el máximo que permite Facebook) y va en un marco dorado; el alto se reserva para que la página no salte.
+- Debajo, el botón **"Ver en Facebook"** abre la página por si el plugin no carga (bloqueadores, Facebook caído).
+- Sin `url`, la sección no se muestra. Para ocultarla sin borrar nada: `secciones.noticias: false`.
+- **Ojo:** Facebook decide qué muestra el plugin. En pruebas sin sesión iniciada aparece el encabezado de la página (nombre, seguidores, botón Seguir) pero no las publicaciones; con sesión de Facebook en el navegador suelen verse. No se puede cambiar el estilo de las publicaciones, solo el marco.
 
 ## Flores de la Feria
 
@@ -276,7 +346,7 @@ El crédito "Hecho con ♥ por AJ Trujillo Dev" enlaza a https://albertrujillo.d
 
 ## Enlace directo, vista previa al compartir e ícono
 
-- **Enlace directo a las reinas:** https://barrancocoloradofest.com/#reinas abre la página directamente en la sección. Igual para el concierto: https://barrancocoloradofest.com/#concierto (también funciona `#baile`) y para las actividades: https://barrancocoloradofest.com/#actividades. `#reinas` no es un id: el salto lo hace `initEnlaceDirecto()` en `main.js` (las secciones fijas de `escenas.js` confunden el salto nativo). Para agregar otro enlace, añade una entrada a `ENLACES`.
+- **Enlace directo a las reinas:** https://barrancocoloradofest.com/#reinas abre la página directamente en la sección. Igual para el concierto: https://barrancocoloradofest.com/#concierto (también funciona `#baile`). `#actividades` (el carrusel que se quitó) lleva a `programa.html`. `#reinas` no es un id: el salto lo hace `initEnlaceDirecto()` en `main.js` (las secciones fijas de `escenas.js` confunden el salto nativo). Para agregar otro enlace, añade una entrada a `ENLACES`.
 - **Vista previa al compartir:** etiquetas Open Graph y Twitter en el `<head>` de `index.html`, con la imagen general `assets/img/compartir/feria-2026.jpg` (1200 × 630: logo y fecha de inicio, estilo de la portada). La anterior, `reinas-2026.jpg`, queda guardada por si se quiere volver a usar. Las URL deben ser absolutas. Si cambias la imagen, usa otro nombre de archivo: Facebook y WhatsApp guardan la anterior en caché (en Facebook se puede refrescar con el Sharing Debugger).
 - **Ícono de la pestaña:** `assets/img/icono/` (32, 48 y 180 px para iPhone), hechos a partir de `assets/img/logo/logo.png`.
 
@@ -289,6 +359,6 @@ El crédito "Hecho con ♥ por AJ Trujillo Dev" enlaza a https://albertrujillo.d
 
 ## Próximas etapas (no incluidas)
 
-Integración con Google Sheets, mapa interactivo, historia del pueblo y del patrono, y agenda completa de actividades.
+Integración con Google Sheets, mapa interactivo e historia del pueblo y del patrono.
 
 El contenido ya está separado en `data.js`. Más adelante se podrá cargar desde otra fuente sin cambiar el diseño.

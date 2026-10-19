@@ -45,11 +45,33 @@
   </script>
   <!-- El contenido vive en data.js; main.js lo muestra. El orden importa. -->
   <script src="js/data.js" defer></script>
+  <script src="js/programa.js" defer></script>
+  <script src="js/reinas.js" defer></script>
+  <script src="js/pie.js" defer></script>
   <script src="js/main.js" defer></script>
+  <script src="js/figuras.js" defer></script>
   <script src="js/intro.js" defer></script>
   <script src="js/escenas.js" defer></script>
 </head>
 <body>
+  <!-- Barra fija: aparece al bajar de la portada (main.js) -->
+  <header class="barra-sitio" data-barra-sitio>
+    <a class="barra-sitio__logo" href="#inicio" aria-label="Volver al inicio">
+      <img src="assets/img/logo/logo.webp" alt="" width="1000" height="775" decoding="async">
+    </a>
+    <!-- Cuenta regresiva compacta (la misma de la portada); al llegar la feria, la bienvenida -->
+    <div class="barra-sitio__centro">
+      <div class="barra-sitio__cuenta" data-barra-cuenta aria-hidden="true">
+        <span class="barra-sitio__unidad"><b data-unit="dias">--</b>d</span>
+        <span class="barra-sitio__unidad"><b data-unit="horas">--</b>h</span>
+        <span class="barra-sitio__unidad"><b data-unit="minutos">--</b>m</span>
+        <span class="barra-sitio__unidad"><b data-unit="segundos">--</b>s</span>
+      </div>
+      <p class="barra-sitio__bienvenida" data-barra-bienvenida hidden>¡Bienvenido a Barranco Colorado!</p>
+    </div>
+    <a class="btn btn--feria barra-sitio__boton" href="programa.html">Ver programa</a>
+  </header>
+
   <main id="contenido">
     <!-- Marca el área de la portada (para pausar los fuegos cuando se cubre) -->
     <div class="portada-sentinela" data-portada-sentinela aria-hidden="true"></div>
@@ -64,51 +86,62 @@
         <span class="hero__flash"></span>
       </div>
 
-      <div class="hero__inner">
-        <h1 class="hero__title" id="titulo-principal">
-          <img class="hero__logo" data-logo="hero" src="assets/img/logo/logo.webp"
-               alt="Feria Patronal Barranco Colorado 2026" width="1000" height="775" fetchpriority="high">
-          <span class="hero__title-text" data-hero-fallback data-feria="nombre" hidden>Feria Patronal Barranco Colorado 2026</span>
-        </h1>
+      <!-- Durante la feria (.hero--feria) son dos columnas: logo y mensaje · actividades de hoy -->
+      <div class="hero__inner" data-escena-contenido>
+        <div class="hero__principal">
+          <h1 class="hero__title" id="titulo-principal">
+            <img class="hero__logo" data-logo="hero" src="assets/img/logo/logo.webp"
+                 alt="Feria Patronal Barranco Colorado 2026" width="1000" height="775" fetchpriority="high">
+            <span class="hero__title-text" data-hero-fallback data-feria="nombre" hidden>Feria Patronal Barranco Colorado 2026</span>
+          </h1>
 
-        <!-- Información para lectores de pantalla y buscadores -->
-        <p class="sr-only">
-          <span data-feria="lugar">San Jorge, Zacapa</span>.
-          <span data-feria="patrono">En honor a San Rafael Arcángel</span>.
-        </p>
+          <!-- Información para lectores de pantalla y buscadores -->
+          <p class="sr-only">
+            <span data-feria="lugar">San Jorge, Zacapa</span>.
+            <span data-feria="patrono">En honor a San Rafael Arcángel</span>.
+          </p>
 
-        <p class="hero__date">
-          <span data-feria="fechaInicioTexto">Inicia el 21 de octubre de 2026</span>
-        </p>
+          <p class="hero__date">
+            <span data-feria="fechaInicioTexto">Inicia el 21 de octubre de 2026</span>
+          </p>
 
-        <div class="countdown" role="group" aria-labelledby="titulo-contador">
-          <h2 class="sr-only" id="titulo-contador">Cuenta regresiva para la feria</h2>
+          <div class="countdown" role="group" aria-labelledby="titulo-contador">
+            <h2 class="sr-only" id="titulo-contador">Cuenta regresiva para la feria</h2>
 
-          <div class="countdown__grid" data-countdown>
-            <div class="countdown__unit">
-              <span class="countdown__num" data-unit="dias">--</span>
-              <span class="countdown__label">Días</span>
+            <div class="countdown__grid" data-countdown>
+              <div class="countdown__unit">
+                <span class="countdown__num" data-unit="dias">--</span>
+                <span class="countdown__label">Días</span>
+              </div>
+              <div class="countdown__unit">
+                <span class="countdown__num" data-unit="horas">--</span>
+                <span class="countdown__label">Horas</span>
+              </div>
+              <div class="countdown__unit">
+                <span class="countdown__num" data-unit="minutos">--</span>
+                <span class="countdown__label">Min</span>
+              </div>
+              <div class="countdown__unit">
+                <span class="countdown__num" data-unit="segundos">--</span>
+                <span class="countdown__label">Seg</span>
+              </div>
             </div>
-            <div class="countdown__unit">
-              <span class="countdown__num" data-unit="horas">--</span>
-              <span class="countdown__label">Horas</span>
-            </div>
-            <div class="countdown__unit">
-              <span class="countdown__num" data-unit="minutos">--</span>
-              <span class="countdown__label">Min</span>
-            </div>
-            <div class="countdown__unit">
-              <span class="countdown__num" data-unit="segundos">--</span>
-              <span class="countdown__label">Seg</span>
-            </div>
+
+            <!-- Solo se anuncia una vez, al terminar el conteo -->
+            <p class="countdown__done" role="status" data-countdown-done></p>
           </div>
 
-          <!-- Solo se anuncia una vez, al terminar el conteo -->
-          <p class="countdown__done" role="status" data-countdown-done></p>
+          <!-- Programa completo; durante la feria abre en el día de hoy (main.js) -->
+          <a class="btn btn--feria hero__cta" href="programa.html" data-accion="actividades">Ver actividades</a>
         </div>
 
-        <!-- Lleva al carrusel de actividades (main.js) -->
-        <button class="btn btn--feria hero__cta" type="button" data-accion="actividades">Ver actividades</button>
+        <!-- Actividades de hoy: solo durante la feria (main.js + programa.js) -->
+        <section class="hoy-panel hero__hoy" data-hero-hoy aria-labelledby="titulo-hoy" hidden>
+          <header class="hoy-panel__header">
+            <h2 class="hoy-panel__etiqueta" id="titulo-hoy">Hoy en la feria</h2>
+            <p class="hoy-panel__fecha" data-hero-hoy-fecha></p>
+          </header>
+        </section>
       </div>
 
       <!-- Indicador para desplazarse al resto del sitio -->
@@ -117,36 +150,6 @@
         <span class="scroll-hint__arrow" aria-hidden="true"></span>
         <span class="sr-only">hacia las noticias</span>
       </a>
-    </section>
-
-    <!-- ============ Actividades: adelanto en carrusel ============ -->
-    <!-- No es el programa oficial: algunas actividades con su afiche, desde data.js -->
-    <section class="section section--actividades" id="actividades" aria-labelledby="titulo-actividades" data-hint="hacia las actividades" hidden>
-      <div class="container">
-        <header class="section__header section__header--center actividades-header">
-          <!-- Logo de la feria en pequeño (el mismo archivo de la portada, ya en caché) -->
-          <img class="actividades-header__logo" data-revelar="pop" src="assets/img/logo/logo.webp"
-               alt="Feria Patronal Barranco Colorado 2026" width="1000" height="775" loading="lazy" decoding="async">
-          <h2 class="actividades-header__titulo" id="titulo-actividades" data-revelar="pop" style="--i: 1">Lo que se viene</h2>
-          <p class="actividades-header__nota" data-actividades-nota data-revelar style="--i: 2"></p>
-        </header>
-
-        <!-- Aviso: el programa oficial todavía se está preparando -->
-        <p class="actividades-aviso" data-actividades-aviso data-revelar="pop" style="--i: 3" hidden>
-          <svg class="actividades-aviso__icono" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 2v2H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-2V2h-2v2h-4V2H8Zm-2 7h12v11H6V9Zm2 3v2h2v-2H8Zm4 0v2h2v-2h-2Zm4 0v2h2v-2h-2Zm-8 4v2h2v-2H8Zm4 0v2h2v-2h-2Z"/></svg>
-          <span data-actividades-aviso-texto></span>
-        </p>
-
-        <div class="actividades-carrusel">
-          <button class="actividades-flecha actividades-flecha--antes" type="button" data-actividades-flecha="-1" aria-label="Actividades anteriores" hidden>
-            <span aria-hidden="true">‹</span>
-          </button>
-          <ul class="actividades-lista" data-actividades tabindex="0" aria-label="Actividades, desliza para ver más"></ul>
-          <button class="actividades-flecha actividades-flecha--despues" type="button" data-actividades-flecha="1" aria-label="Más actividades" hidden>
-            <span aria-hidden="true">›</span>
-          </button>
-        </div>
-      </div>
     </section>
 
     <!-- ============ Evento destacado: gran concierto ============ -->
@@ -256,16 +259,24 @@
       </div>
     </section>
 
-    <!-- ============ Noticias ============ -->
-    <section class="section" id="noticias" aria-labelledby="titulo-noticias">
-      <div class="container">
-        <header class="section__header">
-          <p class="section__eyebrow">Novedades</p>
-          <h2 class="section__title" id="titulo-noticias">Últimas noticias</h2>
+    <!-- ============ Noticias del COCODE (Facebook, desde data.js) ============ -->
+    <section class="section section--cocode" id="noticias" aria-labelledby="titulo-noticias" data-hint="hacia las noticias del COCODE">
+      <div class="container cocode">
+        <header class="cocode__header">
+          <p class="cocode__eyebrow" data-revelar="desplegar">Noticias del</p>
+          <h2 class="cocode__titulo" id="titulo-noticias" data-revelar="pop" style="--i: 1">COCODE</h2>
+          <p class="cocode__texto" data-cocode-texto data-revelar style="--i: 2"></p>
         </header>
 
-        <div class="news-grid" data-noticias></div>
-        <p class="empty-state" data-noticias-empty hidden>Pronto compartiremos las novedades de nuestra feria.</p>
+        <!-- El plugin de Facebook se agrega aquí al acercarse (main.js) -->
+        <div class="cocode__marco" data-cocode-marco data-revelar="voltear" style="--i: 3">
+          <p class="cocode__cargando">Cargando publicaciones…</p>
+        </div>
+
+        <a class="btn btn--feria cocode__enlace" data-cocode-enlace target="_blank" rel="noopener noreferrer">
+          <svg class="btn__icono" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M13.5 22v-8.2h2.8l.4-3.2h-3.2V8.6c0-.9.3-1.6 1.6-1.6h1.7V4.1c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.3H7.3v3.2h2.8V22h3.4Z"/></svg>
+          <span>Ver en Facebook</span>
+        </a>
       </div>
     </section>
 
@@ -390,7 +401,7 @@
     </div>
   </footer>
 
-  <!-- Visor de afiches (se abre al activar la imagen de una noticia) -->
+  <!-- Visor de fotos (se abre al tocar la foto de una reina) -->
   <dialog class="viewer" data-viewer aria-label="Imagen ampliada">
     <button class="viewer__close" type="button" data-viewer-close>
       <span aria-hidden="true">×</span>

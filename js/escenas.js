@@ -79,14 +79,15 @@
         seccion.appendChild(velo);
       }
 
-      var esPortada = seccion.classList.contains("hero");
+      // La primera escena (portada) marca con [data-escena-contenido] lo que se aleja
+      var esPortada = i === 0;
       var escena = {
         seccion: seccion,
         siguiente: siguiente,
         velo: seccion.querySelector(":scope > .escena__velo"),
         // Solo la portada (del alto de la pantalla) se encoge al alejarse:
         // transformar secciones muy altas cuesta demasiado al desplazarse
-        contenido: esPortada ? seccion.querySelector(".hero__inner") : null,
+        contenido: esPortada ? seccion.querySelector("[data-escena-contenido]") : null,
         inicioSiguiente: 0,
         avance: -1,
         fuera: false,    // fuera de pantalla

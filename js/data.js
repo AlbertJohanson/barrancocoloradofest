@@ -27,8 +27,7 @@ window.FERIA_DATA = {
    */
   secciones: {
     evento: true,
-    actividades: true,
-    noticias: false,
+    noticias: true, // Noticias del COCODE (Facebook)
     flores: true,
     patrocinadores: true
   },
@@ -39,7 +38,7 @@ window.FERIA_DATA = {
    */
   cuentaRegresiva: {
     fechaObjetivo: "2026-10-21T00:00:00-06:00",
-    mensajeFinal: "¡La feria ha comenzado!"
+    mensajeFinal: "¡La feria ha comenzado, acompáñanos!"
   },
 
   /* ---------- Logo (portada) ----------
@@ -146,90 +145,216 @@ window.FERIA_DATA = {
     }
   },
 
-  /* ---------- Actividades: adelanto (no es el programa oficial) ----------
-   * Carrusel ordenado por fecha y hora. Las de días pasados se ocultan solas.
-   * Campos: titulo, fecha ("AAAA-MM-DD"), hora ("HH:MM", 24 h; opcional),
-   *   horaTexto (opcional, reemplaza a la hora: ej. "Por la tarde"),
-   *   lugar, descripcion (opcional),
-   *   afiche (imagen completa, se abre al tocar) y miniatura (para la tarjeta),
-   *   alt, encuadre (qué parte del afiche se ve en la tarjeta, ej. "50% 30%"),
-   * Sin afiche se muestra una tarjeta de color con el nombre.
-   * El gran concierto no va aquí: tiene su propia sección.
-   * aviso: mensaje destacado sobre el programa oficial ("" para quitarlo).
+  /* ---------- Programa oficial (página programa.html) ----------
+   * Tomado del programa oficial de la Municipalidad de San Jorge.
+   * Antes de la feria se ven todos los días. Durante la feria, las
+   * actividades del día se destacan en la portada y el programa abre en hoy.
+   * Campos de cada actividad:
+   *   hora ("HH:MM", 24 h). Medianoche = "24:00": queda al final de ese día.
+   *   titulo, detalle (opcional),
+   *   icono: desfile, discurso, musica, marimba, corona, iglesia, ninos,
+   *          moto, fuegos, cafe, caballo, cena
+   *   destacado (opcional): true para las actividades principales.
+   *   enlace (opcional): { texto, url } para ver más.
+   *   imagen (opcional): { ruta, ancho, alto, alt }. Las actividades con
+   *          imagen son las principales: tarjeta grande con su banner
+   *          (los banners salen del programa oficial).
+   *   etiqueta (opcional): texto sobre el título de una principal
+   *          en lugar de "Actividad principal".
+   * cambioDeDia: hasta esa hora de la madrugada se sigue mostrando el día
+   *   anterior (así la serenata de medianoche sigue en "Hoy").
    */
-  actividades: {
-    nota: "Un adelanto de algunas actividades de nuestra feria. Fechas y horarios pueden cambiar.",
-    aviso: "El programa oficial de la feria aún está en preparación. ¡Muy pronto lo compartiremos aquí!",
-    lista: [
+  programa: {
+    fechasTexto: "Del 21 al 25 de octubre de 2026",
+    cambioDeDia: "05:00",
+    dias: [
       {
-        titulo: "Desfile de inauguración",
         fecha: "2026-10-21",
-        hora: "15:30",
-        lugar: "Plaza San Rafael",
-        descripcion: "Bandas rítmicas, nuestras reinas, alegría y mucha diversión.",
-        afiche: "assets/img/actividades/desfile-inauguracion.webp",
-        miniatura: "assets/img/actividades/desfile-inauguracion-mini.webp",
-        alt: "Afiche del desfile de inauguración de la Feria Patronal Barranco Colorado 2026: miércoles 21 de octubre, 3:30 p. m., Plaza San Rafael",
-        encuadre: "50% 45%"
+        actividades: [
+          {
+            hora: "15:30",
+            titulo: "Desfile de inauguración",
+            detalle: "Iniciando en el barrio La Ceiba, San Jorge, recorriendo las principales calles de Barranco Colorado, hacia la plaza San Rafael.",
+            icono: "desfile",
+            destacado: true
+          },
+          {
+            hora: "19:45",
+            titulo: "Acto de inauguración",
+            detalle: "A cargo del señor alcalde municipal, Lic. David Trujillo, y su honorable Concejo Municipal.",
+            icono: "discurso"
+          },
+          {
+            hora: "20:00",
+            titulo: "Gran concierto con Los Tigres de Oriente",
+            imagen: { ruta: "assets/img/programa/los-tigres-de-oriente.webp", ancho: 850, alto: 212, alt: "Grupo musical Los Tigres de Oriente" },
+            detalle: "Gracias a la Municipalidad de San Jorge.",
+            icono: "musica",
+            destacado: true
+          },
+          {
+            hora: "24:00",
+            titulo: "Serenata a nuestras reinas",
+            imagen: { ruta: "assets/img/programa/flor-de-la-feria.webp", ancho: 800, alto: 680, alt: "Ana Rosa de Paz Súchite, Flor de la Feria 2026, con su corona y su banda" },
+            etiqueta: "Nuestras reinas",
+            icono: "corona"
+          }
+        ]
       },
       {
-        titulo: "Los Tigres de Oriente",
-        fecha: "2026-10-21",
-        hora: "20:00",
-        lugar: "Plaza San Rafael",
-        afiche: "assets/img/actividades/los-tigres-de-oriente.webp",
-        miniatura: "assets/img/actividades/los-tigres-de-oriente-mini.webp",
-        alt: "Afiche de Los Tigres de Oriente en Barranco Colorado: miércoles 21 de octubre, 8:00 p. m., Plaza San Rafael",
-        encuadre: "50% 55%"
-      },
-      {
-        titulo: "Titanium, la disco móvil",
         fecha: "2026-10-22",
-        hora: "19:30",
-        lugar: "Salón Social Barranco Colorado",
-        descripcion: "Lluvia de espuma y show de robot.",
-        afiche: "assets/img/actividades/titanium-disco-movil.webp",
-        miniatura: "assets/img/actividades/titanium-disco-movil-mini.webp",
-        alt: "Afiche de Titanium, la disco móvil, con lluvia de espuma y show de robot: jueves 22 de octubre, 7:30 p. m., Salón Social Barranco Colorado",
-        encuadre: "50% 50%"
+        actividades: [
+          {
+            hora: "15:30",
+            titulo: "Tarde cultural y familiar",
+            detalle: "Con marimba de la Municipalidad de Zacapa (agradecimientos a Xiomara Ovalle). En plaza San Rafael.",
+            icono: "marimba"
+          },
+          {
+            hora: "20:00",
+            titulo: "Gran baile con Disco Móvil Titanium",
+            imagen: { ruta: "assets/img/programa/titanium.webp", ancho: 894, alto: 204, alt: "Discomóvil Titanium, la disco móvil sin límites" },
+            detalle: "En el salón social, gracias a la Municipalidad de San Jorge.",
+            icono: "musica",
+            destacado: true
+          }
+        ]
       },
       {
-        titulo: "Tarde infantil",
         fecha: "2026-10-23",
-        horaTexto: "Por la tarde"
+        actividades: [
+          {
+            hora: "16:00",
+            titulo: "Tarde infantil",
+            detalle: "Gracias a Amarilis Trabanino y familia, en plaza San Rafael.",
+            icono: "ninos"
+          },
+          {
+            hora: "20:00",
+            titulo: "Gran concierto con marimba Orquesta Maya Excelsior",
+            imagen: { ruta: "assets/img/programa/maya-excelsior.webp", ancho: 888, alto: 194, alt: "Marimba Orquesta Maya Excelsior, La Preferida" },
+            detalle: "En plaza San Rafael. Gracias al patrocinio del señor alcalde David Trujillo y su Concejo Municipal.",
+            icono: "marimba",
+            destacado: true
+          },
+          {
+            hora: "24:00",
+            titulo: "Serenata al santo patrono San Rafael Arcángel",
+            detalle: "En la iglesia católica.",
+            icono: "iglesia"
+          }
+        ]
       },
       {
-        titulo: "Marimba Orquesta Maya Excelsior",
-        fecha: "2026-10-23",
-        hora: "20:00",
-        afiche: "assets/img/actividades/maya-excelsior.webp",
-        miniatura: "assets/img/actividades/maya-excelsior-mini.webp",
-        alt: "Afiche de la Marimba Orquesta Maya Excelsior, La Preferida: viernes 23 de octubre, 8:00 p. m., Barranco Colorado",
-        encuadre: "30% 50%"
+        fecha: "2026-10-24",
+        actividades: [
+          {
+            hora: "10:00",
+            titulo: "Inscripciones para el Motocross",
+            detalle: "Evento organizado por jóvenes de nuestra comunidad de Barranco Colorado.",
+            icono: "moto"
+          },
+          {
+            hora: "18:00",
+            titulo: "Procesión del santo patrono San Rafael Arcángel",
+            imagen: { ruta: "assets/img/programa/procesion.webp", ancho: 1200, alto: 500, alt: "Altar de San Rafael Arcángel en la iglesia de Barranco Colorado" },
+            detalle: "Saliendo del templo católico.",
+            icono: "iglesia",
+            destacado: true
+          },
+          {
+            hora: "20:00",
+            titulo: "Gran concierto internacional",
+            imagen: { ruta: "assets/img/programa/concierto-internacional.webp", ancho: 892, alto: 166, alt: "Los CMS, 40 Grados Gt y Los Sementales" },
+            detalle: "Con Los Caminantes, Los Sementales y 40 Grados Gt, en el estadio comunal de Barranco Colorado.",
+            icono: "musica",
+            destacado: true,
+            enlace: { texto: "Entradas y localidades", url: "./#concierto" }
+          },
+          {
+            hora: "22:30",
+            titulo: "Quema del tradicional castillo",
+            icono: "fuegos"
+          }
+        ]
       },
       {
-        titulo: "Desfile hípico",
-        fecha: "2026-10-25"
-      },
-      {
-        titulo: "Banda Vega de Luis Vega",
         fecha: "2026-10-25",
-        hora: "20:00",
-        lugar: "Plaza San Rafael",
-        afiche: "assets/img/actividades/banda-vega.webp",
-        miniatura: "assets/img/actividades/banda-vega-mini.webp",
-        alt: "Afiche del concierto de Banda Vega de Luis Vega: domingo 25 de octubre, 8:00 p. m., Plaza San Rafael",
-        encuadre: "50% 30%"
+        actividades: [
+          {
+            hora: "15:00",
+            titulo: "Refacción para el ganadero",
+            detalle: "Cortesía de José Adelmo Rosales, en el Estadio Comunal.",
+            icono: "cafe"
+          },
+          {
+            hora: "16:00",
+            titulo: "Desfile hípico",
+            imagen: { ruta: "assets/img/programa/desfile-hipico.webp", ancho: 426, alto: 190, alt: "Desfile hípico Barranco Colorado, San Jorge" },
+            detalle: "Recorriendo las principales calles de San Jorge y Barranco Colorado.",
+            icono: "caballo",
+            destacado: true
+          },
+          {
+            hora: "19:00",
+            titulo: "Cena para el ganadero",
+            detalle: "Cortesía de la Municipalidad de San Jorge, en el Estadio Comunal.",
+            icono: "cena"
+          },
+          {
+            hora: "20:00",
+            titulo: "Gran concierto con Banda Vega de Luis Vega",
+            imagen: { ruta: "assets/img/programa/banda-vega.webp", ancho: 450, alto: 190, alt: "Banda Vega de Luis Vega" },
+            detalle: "En plaza San Rafael. Gracias a la Municipalidad de San Jorge.",
+            icono: "musica",
+            destacado: true
+          }
+        ]
       }
+    ],
+
+    // Franja final, con el escudo, como en la sección de las reinas
+    patrocinio: {
+      antes: "Gracias al patrocinio de",
+      nombre: "Lic. David Trujillo",
+      despues: "Alcalde municipal, su honorable Concejo Municipal y la Municipalidad de",
+      lugar: "San Jorge"
+    },
+
+    // Última página del programa oficial
+    agradecimientos: [
+      "Cerveza Gallo",
+      "Cooperativa MICOOPE",
+      "Agua Pura el Petón",
+      "Banrural",
+      "José Adelmo Rosales Salguero",
+      "Sergio Ventura",
+      "Amarilis Trabanino",
+      "Transportes Nohely",
+      "Tiendas Belikyn",
+      "Hencer Oliva",
+      "Kelyn Trabanino",
+      "Luis Curin"
+    ],
+    cocode: [
+      "Carlos Iván Granados",
+      "Mario Flores Cruz",
+      "Taty de la Peña",
+      "Julio Trujillo",
+      "Nilson Rosales",
+      "Miguel Ángel"
     ]
   },
 
-  /* ---------- Noticias ----------
-   * Campos: id, titulo, descripcion, fechaPublicacion, imagen, alt, publicado
-   * Solo se muestran las que tienen publicado: true, de la más reciente
-   * a la más antigua. Ver ejemplos en README.md.
+  /* ---------- Noticias del COCODE (sección "noticias" de la portada) ----------
+   * Publicaciones de la página de Facebook del COCODE con el plugin de
+   * página de Meta (Page Plugin). url: dirección pública de la página.
    */
-  noticias: [],
+  cocode: {
+    nombre: "COCODE Barranco Colorado",
+    url: "https://www.facebook.com/profile.php?id=61576769459995",
+    texto: "Avisos y novedades de nuestra comunidad, directo desde la página del COCODE."
+  },
 
   /* ---------- Agradecimiento (al pie de la sección de las Flores) ----------
    * Se muestra como en el afiche: escudo + "Con el apoyo de…".

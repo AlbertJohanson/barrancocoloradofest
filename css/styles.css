@@ -146,6 +146,121 @@ a {
 }
 
 /* =========================================================
+ * Barra fija de la portada (main.js pone .is-visible al bajar)
+ * Pastilla flotante con el logo y el botón al programa.
+ * Solo se anima transform; escondida queda fuera del orden de tabulación.
+ * ======================================================= */
+.barra-sitio {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: min(calc(100% - 24px), 760px);
+  padding: 15px 15px 15px 22px; /* al menos 15 px por lado */
+  border: 1px solid rgba(255, 214, 0, 0.5);
+  border-radius: 999px;
+  background: rgba(7, 27, 80, 0.94);
+  box-shadow: 0 10px 28px rgba(3, 12, 40, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translate(-50%, calc(-100% - 20px));
+  visibility: hidden;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.35s;
+}
+
+.barra-sitio.is-visible {
+  transform: translate(-50%, 0);
+  visibility: visible;
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.barra-sitio__logo {
+  display: block;
+  flex: none;
+  border-radius: 8px;
+}
+
+/* Cuenta regresiva compacta: números con el estilo del contador */
+.barra-sitio__centro {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.barra-sitio__cuenta {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.3rem, 1.6vw, 0.8rem);
+}
+
+.barra-sitio__unidad {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.barra-sitio__unidad b {
+  margin-right: 1px;
+  background: linear-gradient(180deg, #FFF6B0 0%, #FFD600 40%, #FF9A00 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  font-family: var(--font-timer);
+  font-size: clamp(1.05rem, 4.4vw, 1.45rem);
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bienvenida: cursiva dorada, como los títulos de las reinas */
+.barra-sitio__bienvenida {
+  padding-inline: 0.2em;
+  background: linear-gradient(180deg, #FFE9A3 10%, #FFC93C 50%, #FF9E1B 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  font-family: var(--font-script);
+  font-size: clamp(0.85rem, 3.8vw, 1.35rem);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.barra-sitio__logo img {
+  width: auto;
+  height: clamp(42px, 11vw, 52px);
+  margin-block: -6px; /* el logo sobresale un poco de la pastilla */
+  filter: drop-shadow(0 3px 6px rgba(3, 12, 40, 0.5));
+}
+
+.barra-sitio :focus-visible {
+  outline-color: #fff;
+}
+
+.btn--feria.barra-sitio__boton {
+  flex: none;
+  min-height: 44px;
+  padding: 0.4rem 1.3rem;
+  border-width: 2px;
+  box-shadow: 0 3px 0 #B35A00;
+  font-size: 1.05rem;
+}
+
+/* Teléfonos angostos: botón y márgenes más compactos */
+@media (max-width: 420px) {
+  .barra-sitio {
+    gap: 0.5rem;
+    padding: 15px;
+  }
+
+  .btn--feria.barra-sitio__boton {
+    padding-inline: 0.85rem;
+    font-size: 0.92rem;
+  }
+}
+
+/* =========================================================
  * Portada: logo, fecha, cuenta regresiva y botón
  * Fondo: carrusel de fotos con una capa azul marino encima.
  * ======================================================= */
@@ -607,117 +722,105 @@ a {
 }
 
 /* =========================================================
- * Noticias
+ * Noticias del COCODE (plugin de página de Facebook)
+ * Noche azul de la portada; el plugin en un marco dorado.
  * ======================================================= */
-.news-grid {
-  display: grid;
-  align-items: start;
-  gap: 1.25rem;
+.section--cocode {
+  --oro: var(--amarillo);
+  --rosa: var(--celeste); /* brillo del borde de la hoja (escenas) */
+
+  position: relative;
+  background:
+    radial-gradient(ellipse 80% 45% at 50% 0, #1466F5 0%, #0A3CB0 40%, transparent 75%),
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(0, 188, 235, 0.16), transparent 70%),
+    var(--marino);
+  color: #fff;
 }
 
-@media (min-width: 600px) {
-  .news-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-}
-
-@media (min-width: 1000px) {
-  .news-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-.news-card {
+.cocode {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
-  border-radius: var(--radius);
-  background: var(--superficie);
-  border: 1px solid var(--borde);
-  border-top: 5px solid var(--naranja);
-  box-shadow: var(--shadow);
-}
-
-.news-card__media {
-  margin: 0;
-  background: #F3EFE4;
-}
-
-/* Afiche completo, sin recortes */
-.news-card__zoom {
-  display: block;
-  width: 100%;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: zoom-in;
-}
-
-.news-card__zoom img {
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  object-fit: contain;
-}
-
-.news-card__zoom:focus-visible {
-  outline-offset: -4px;
-}
-
-.news-card__body {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1.25rem;
-}
-
-.news-card__date {
-  color: var(--gris);
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-
-.news-card__title {
-  font-size: 1.25rem;
-}
-
-/* Visor de afiches */
-.viewer {
-  width: min(92vw, 900px);
-  max-height: 92vh;
-  padding: 1rem;
-  border: 0;
-  border-radius: var(--radius);
-  background: var(--superficie);
-}
-
-.viewer::backdrop {
-  background: rgba(7, 27, 80, 0.85);
-}
-
-.viewer__img {
-  width: 100%;
-  max-height: calc(92vh - 7rem);
-  object-fit: contain;
-  margin-inline: auto;
-}
-
-.viewer__caption {
-  margin-top: 0.75rem;
-  color: var(--marino);
-  font-weight: 700;
+  align-items: center;
+  gap: 1.5rem;
   text-align: center;
 }
 
-.viewer__close {
+.cocode__header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  margin: 0 0 0.5rem auto;
+  gap: 0.35rem;
+}
+
+/* Cinta fucsia, como la fecha de la portada */
+.cocode__eyebrow {
+  padding: 0.3rem 1.2rem 0.35rem;
+  border: 2px solid var(--amarillo);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FF2E9A 0%, var(--fucsia) 55%, #B0005F 100%);
+  box-shadow: 0 4px 0 #5A0030;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  text-shadow: 0 2px 0 #6B0038;
+}
+
+/* Letras doradas con contorno, como los números del contador */
+.cocode__titulo {
+  padding-inline: 0.1em;
+  font-family: var(--font-timer);
+  font-size: clamp(2.6rem, 12vw, 4rem);
+  line-height: 1.1;
+  background: linear-gradient(180deg, #FFF6B0 0%, #FFD600 32%, #FF9A00 66%, #FF5A00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter:
+    drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff)
+    drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff)
+    drop-shadow(0 4px 0 #0A1F6B);
+}
+
+.cocode__texto {
+  max-width: 30rem;
+  color: rgba(255, 255, 255, 0.88);
+  font-family: var(--font-script);
+  font-size: 1.2rem;
+  text-wrap: balance;
+}
+
+/* Marco dorado; reserva el alto del plugin para que la página no salte */
+.cocode__marco {
+  display: grid;
+  place-items: center;
+  width: min(100%, 516px);
+  min-height: calc(var(--alto, 620px) + 16px);
+  padding: 8px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 214, 0, 0.85);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 14px 30px rgba(3, 12, 40, 0.5), 0 0 0 6px rgba(255, 214, 0, 0.12);
+}
+
+.cocode__iframe {
+  display: block;
+  max-width: 100%;
   border: 0;
-  border-radius: 50%;
-  background: var(--marino);
-  color: #fff;
-  font-size: 1.75rem;
-  line-height: 1;
-  cursor: pointer;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.cocode__marco.is-cargado .cocode__cargando {
+  display: none;
+}
+
+.cocode__cargando {
+  color: var(--gris);
+  font-weight: 600;
+}
+
+.cocode__enlace {
+  gap: 0.5rem;
 }
 
 /* =========================================================
@@ -2062,63 +2165,118 @@ a {
 }
 
 /* =========================================================
- * Actividades: adelanto en carrusel
- * Mismo estilo que la portada: noche azul, cinta fucsia, dorado
- * y recuadros como los del contador. Sin animaciones continuas.
+ * Portada durante la feria (main.js pone .hero--feria)
+ * Logo, mensaje y botón · actividades de hoy.
+ * Una columna en teléfonos; dos desde 900 px.
  * ======================================================= */
-.section--actividades {
-  --oro: var(--amarillo);
-  --rosa: var(--fucsia); /* brillo del borde de la hoja (escenas) */
-
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  background:
-    radial-gradient(ellipse 80% 45% at 50% 0, #1466F5 0%, #0A3CB0 40%, transparent 75%),
-    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(230, 0, 126, 0.18), transparent 70%),
-    var(--marino);
-  color: #fff;
-}
-
-/* Destellos de fondo (estáticos) */
-.section--actividades::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image:
-    radial-gradient(circle, rgba(255, 214, 0, 0.55) 0 2px, transparent 3px),
-    radial-gradient(circle, rgba(0, 188, 235, 0.45) 0 2.5px, transparent 3.5px),
-    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 1.5px, transparent 2.5px);
-  background-size: 160px 150px, 230px 210px, 95px 115px;
-  background-position: 15px 25px, 80px 100px, 45px 10px;
-  -webkit-mask-image: linear-gradient(180deg, #000, transparent 65%);
-          mask-image: linear-gradient(180deg, #000, transparent 65%);
-}
-
-/* ---------- Encabezado ---------- */
-.actividades-header {
+.hero__principal {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
+  gap: clamp(0.9rem, 2.6vh, 1.6rem);
+  width: 100%;
 }
 
-/* Logo de la feria en pequeño, con la misma sombra que en la portada */
-.actividades-header__logo {
-  width: min(48vw, 210px);
-  height: auto;
-  filter: drop-shadow(0 10px 18px rgba(3, 12, 40, 0.6));
+.hero--feria .hero__inner {
+  gap: 2.5rem;
+  padding-top: 2rem;
+}
+
+/* "Inicia el 21 de octubre" ya no aplica */
+.hero--feria .hero__date {
+  display: none;
+}
+
+.hero--feria .hero__logo {
+  width: min(72vw, 380px);
+}
+
+.hero--feria .countdown__done.is-visible {
+  max-width: 15ch;
+  margin-inline: auto;
+  font-size: clamp(1.9rem, 8.4vw, 3.1rem);
+  text-wrap: balance;
+}
+
+.hero__hoy {
+  width: min(100%, 560px);
+}
+
+.intro .hero__hoy {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .is-revealed .hero__hoy {
+    animation: unidad-entrada 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.35) 1.5s both;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero--feria .hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-content: center;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    width: 100%;
+    max-width: 1160px;
+    margin-inline: auto;
+  }
+
+  .hero--feria .hero__logo {
+    width: min(100%, 520px, calc(44svh * 1.29));
+  }
+
+  .hero__hoy {
+    justify-self: start;
+  }
+}
+
+/* =========================================================
+ * "Hoy en la feria" en la portada (js/programa.js)
+ * Recuadro del contador, cinta fucsia y horas en pastillas
+ * doradas, como el afiche.
+ * ======================================================= */
+.hoy-panel {
+  margin-top: 1.1rem; /* espacio para la cinta que monta el borde */
+  padding: 0 1rem 0.5rem;
+  border: 2px solid rgba(255, 214, 0, 0.85);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(20, 70, 200, 0.8) 0%, rgba(7, 27, 80, 0.94) 100%);
+  box-shadow: 0 14px 30px rgba(3, 12, 40, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  color: #fff;
+  text-align: left;
+}
+
+.hoy-panel__header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  margin: -1.1rem 0 0.5rem;
+  text-align: center;
+}
+
+/* Cinta fucsia, como la fecha de la portada */
+.hoy-panel__etiqueta {
+  padding: 0.3rem 1.2rem 0.35rem;
+  border: 2px solid var(--amarillo);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FF2E9A 0%, var(--fucsia) 55%, #B0005F 100%);
+  box-shadow: 0 4px 0 #5A0030, 0 8px 18px rgba(3, 12, 40, 0.45);
+  color: #fff;
+  font-size: clamp(1.05rem, 4.4vw, 1.3rem);
+  text-shadow: 0 2px 0 #6B0038;
 }
 
 /* Letras doradas con contorno, como los números del contador */
-.actividades-header__titulo {
+.hoy-panel__fecha {
   padding-inline: 0.1em;
   font-family: var(--font-timer);
-  font-size: clamp(2.3rem, 10vw, 3.6rem);
+  font-size: clamp(1.45rem, 6.4vw, 2rem);
   line-height: 1.1;
+  text-wrap: balance;
   background: linear-gradient(180deg, #FFF6B0 0%, #FFD600 32%, #FF9A00 66%, #FF5A00 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -2129,268 +2287,1061 @@ a {
     drop-shadow(0 4px 0 #0A1F6B);
 }
 
-.actividades-header__nota {
-  max-width: 36rem;
-  color: rgba(255, 255, 255, 0.88);
-  font-size: 1.05rem;
+/* ---------- Agenda ---------- */
+.agenda {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-/* Aviso: el programa oficial está en preparación */
-.actividades-aviso {
+.agenda__item {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 0.85rem;
+  align-items: start;
+  padding: 0.9rem 0.4rem;
+  border-top: 1px solid rgba(255, 214, 0, 0.3);
+  border-radius: 16px;
+  transition: opacity 0.3s ease;
+}
+
+.agenda__item:first-child {
+  border-top-color: transparent;
+}
+
+/* Ícono en círculo azul marino con aro dorado */
+.agenda__icono {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 2px solid var(--amarillo);
+  border-radius: 50%;
+  background: var(--marino);
+  box-shadow: 0 4px 10px rgba(3, 12, 40, 0.45);
+  color: #fff;
+}
+
+.agenda__icono svg {
+  width: 24px;
+  height: 24px;
+}
+
+.agenda__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.agenda__hora {
+  padding: 0.1rem 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #FFE45C 0%, var(--amarillo) 45%, #FFA800 100%);
+  box-shadow: 0 2px 0 #B35A00;
+  color: var(--marino);
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  line-height: 1.45;
+  white-space: nowrap;
+}
+
+.agenda__estado {
+  padding: 0.05rem 0.6rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.75);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.agenda__titulo {
+  color: #fff;
+  font-size: 1.18rem;
+  line-height: 1.2;
+  text-shadow: 0 2px 0 var(--marino);
+}
+
+.agenda__detalle {
+  margin-top: 0.25rem;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.agenda__enlace {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--amarillo);
+  font-weight: 700;
+}
+
+.agenda__enlace:focus-visible {
+  outline-color: var(--amarillo);
+}
+
+/* Actividades principales: ícono dorado y título amarillo */
+.agenda__item--destacado .agenda__icono {
+  border-color: #fff;
+  background: linear-gradient(180deg, #FFE45C 0%, var(--amarillo) 45%, #FFA800 100%);
+  color: var(--marino);
+}
+
+.agenda__item--destacado .agenda__titulo {
+  color: var(--amarillo);
+}
+
+/* Avance del día (solo en la agenda de hoy) */
+.agenda__item.is-pasada {
+  opacity: 0.5;
+}
+
+.agenda__item.is-ahora {
+  border-top-color: transparent;
+  background: rgba(230, 0, 126, 0.24);
+  box-shadow: inset 0 0 0 2px rgba(255, 46, 154, 0.85);
+}
+
+.agenda__item.is-ahora + .agenda__item {
+  border-top-color: transparent;
+}
+
+.agenda__item.is-ahora .agenda__estado {
+  border-color: var(--amarillo);
+  background: linear-gradient(180deg, #FF2E9A, var(--fucsia));
+}
+
+.agenda__item.is-proxima .agenda__estado {
+  border-color: var(--amarillo);
+  color: var(--amarillo);
+}
+
+/* =========================================================
+ * Página del programa (programa.html)
+ * Sobria: noche azul, filetes dorados y letra romana (Cinzel, como
+ * "FERIA PATRONAL" en el afiche) en los títulos; los textos, en la
+ * cursiva de los nombres de las reinas. La iglesia de fondo en la
+ * cabecera y San Rafael en un arco. Cada sección es una escena
+ * (js/escenas.js), como en la portada. Sin animaciones continuas.
+ * ======================================================= */
+.pagina-programa {
+  --font-serif: "Cinzel", Georgia, "Times New Roman", serif;
+  --oro: #FFC93C;
+  --oro-claro: #FFE9A3;
+  --noche: #12061C;
+  --rosa: #FF2E9A;
+  --tinta: var(--marino); /* mismo azul de la portada de inicio */
+
+  background: var(--tinta);
+  color: #fff;
+}
+
+.pagina-programa :focus-visible {
+  outline-color: var(--oro);
+}
+
+/* Textos en cursiva, como los nombres de los agradecimientos */
+.act-card__detalle,
+.programa-portada__lugar,
+.programa-vacio {
+  font-family: var(--font-script);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Cabecera ---------- */
+.programa-portada {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding-bottom: 2.5rem;
+  background: var(--tinta);
+}
+
+.programa-portada__fondo {
+  position: absolute;
+  inset: 0;
+  z-index: -2; /* debajo de los fuegos (js/fuegos.js) */
+}
+
+.programa-portada__fondo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 35%;
+}
+
+/* Capa azul para leer el texto; abajo se funde con la página */
+.programa-portada__fondo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    /* Misma capa que las fotos de la portada de inicio; abajo se funde con la página */
+    linear-gradient(180deg, transparent 70%, var(--tinta) 100%),
+    radial-gradient(ellipse at 50% 40%, rgba(7, 27, 80, 0.42) 0%, rgba(7, 27, 80, 0.68) 55%, rgba(4, 13, 45, 0.9) 100%);
+}
+
+.programa-barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-block: 0.75rem;
+}
+
+.programa-barra__volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 44px;
+  padding: 0.35rem 1.1rem 0.35rem 0.9rem;
+  border: 1px solid rgba(255, 233, 163, 0.5);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.programa-barra__volver span {
+  color: var(--oro);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.programa-barra__volver:hover {
+  border-color: var(--oro);
+  background: rgba(255, 201, 60, 0.1);
+}
+
+.programa-barra__logo {
+  width: 96px;
+  height: auto;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.45));
+}
+
+.programa-portada__inner {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.4rem;
-  max-width: 640px;
-  margin: 0 auto 1.75rem;
-  padding: 0.85rem 1.2rem;
-  border: 2px solid rgba(255, 214, 0, 0.85);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(20, 70, 200, 0.72) 0%, rgba(7, 27, 80, 0.88) 100%);
-  box-shadow: 0 10px 24px rgba(3, 12, 40, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  gap: 1.75rem;
+  padding-top: 0.5rem;
+  text-align: center;
+}
+
+.programa-portada__texto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+/* Texto pequeño entre filetes dorados */
+.programa-portada__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--oro-claro);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+.programa-portada__eyebrow::before,
+.programa-portada__eyebrow::after {
+  content: "";
+  width: 32px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--oro));
+}
+
+.programa-portada__eyebrow::after {
+  background: linear-gradient(90deg, var(--oro), transparent);
+}
+
+.programa-portada__titulo {
+  padding-inline: 0.05em;
+  background: linear-gradient(180deg, #FFF3C4 0%, var(--oro) 58%, #DE9A12 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 9vw, 4.25rem);
   font-weight: 700;
-  line-height: 1.4;
+  line-height: 1.08;
+  letter-spacing: 0.03em;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.35));
+}
+
+.programa-portada__fechas {
+  padding: 0.5rem 1.25rem;
+  border-block: 1px solid rgba(255, 201, 60, 0.6);
+  font-family: var(--font-serif);
+  font-size: clamp(0.98rem, 3.8vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.programa-portada__lugar {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.15rem;
+}
+
+/* San Rafael en un arco con doble filete dorado */
+.programa-santo {
+  order: -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 0;
+}
+
+.programa-santo__arco {
+  display: block;
+  width: min(48vw, 200px);
+  aspect-ratio: 5 / 7;
+  overflow: hidden;
+  border: 2px solid var(--oro);
+  border-radius: 999px 999px 14px 14px;
+  outline: 1px solid rgba(255, 201, 60, 0.45);
+  outline-offset: 6px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  cursor: pointer; /* tocarlo lanza un fuego (js/fuegos.js) */
+}
+
+.programa-santo__arco img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 8%;
+}
+
+.programa-santo__texto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+/* Mismo dorado en cursiva que los nombres de las reinas */
+.programa-santo__nombre,
+.programa-gracias__titulo,
+.programa-gracias__nombres li {
+  padding-inline: 0.2em; /* la letra cursiva sobresale: así no se corta el degradado */
+  background: linear-gradient(180deg, var(--oro-claro) 10%, var(--oro) 50%, #FF9E1B 100%);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  font-family: var(--font-script);
+  font-weight: 400;
+  line-height: 1.25;
+  filter: drop-shadow(0 2px 0 #5B0A3A);
+}
+
+.programa-santo__nombre {
+  font-size: 1.6rem;
+}
+
+.programa-santo__rol {
+  color: rgba(255, 233, 163, 0.85);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 900px) {
+  .programa-portada {
+    padding-bottom: 3.5rem;
+  }
+
+  .programa-portada__inner {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 3rem;
+    padding-top: 1.5rem;
+    text-align: left;
+  }
+
+  .programa-portada__texto {
+    align-items: flex-start;
+  }
+
+  .programa-portada__fechas {
+    padding-inline: 0;
+  }
+
+  .programa-santo {
+    order: 0;
+    margin-right: 2rem;
+  }
+
+  .programa-santo__arco {
+    width: 250px;
+  }
+}
+
+/* ---------- Actividades (escena con fondo propio) ---------- */
+/* Azul de la portada de inicio en toda la sección: brillo arriba y #0A3CB0 de base */
+.programa-actividades {
+  position: relative;
+  background:
+    radial-gradient(ellipse 80% 600px at 50% 0, #1466F5 0%, transparent 75%) no-repeat,
+    radial-gradient(ellipse 60% 40% at 100% 100%, rgba(230, 0, 126, 0.14), transparent 70%),
+    #0A3CB0;
+}
+
+
+/* ---------- Filtro por día (fijo arriba al bajar) ---------- */
+/* Llamado sobre el filtro */
+.programa-filtro__ayuda {
+  margin: 0;
+  padding: 1.5rem var(--gutter) 0;
+  color: var(--oro-claro);
+  font-size: 0.9rem;
+  font-weight: 600;
   text-align: center;
   text-wrap: balance;
 }
 
-.actividades-aviso__icono {
-  flex: none;
-  color: var(--amarillo);
+/* Ícono junto al texto, aunque este ocupe dos líneas */
+.programa-filtro__ayuda svg {
+  display: inline-block;
+  margin-right: 0.3rem;
+  vertical-align: -3px;
+  color: var(--oro);
 }
 
-.actividades-carrusel {
-  position: relative;
-}
-
-/* La lista llega hasta los bordes de la pantalla en teléfonos */
-.actividades-lista {
+/* Pastilla redondeada al inicio; al quedar fija arriba (programa.js pone
+   .is-fija) se vuelve una barra normal de lado a lado, sin esquinas.
+   El alto no cambia, para que el contenido no salte. */
+.programa-filtro {
+  position: sticky;
+  top: 0;
+  z-index: 5;
   display: flex;
-  gap: 1rem;
-  margin: 0 calc(-1 * var(--gutter));
-  padding: 0.5rem var(--gutter) 1.5rem;
-  overflow-x: auto;
-  overflow-y: hidden; /* solo se desliza de lado */
-  list-style: none;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--gutter);
-  overscroll-behavior-x: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--amarillo) transparent;
-}
-
-.actividades-lista:focus-visible {
-  outline-color: var(--amarillo);
-  outline-offset: -3px;
-}
-
-/* Tarjeta con el marco de los recuadros del contador */
-.actividad {
-  display: flex;
-  flex: 0 0 min(76vw, 270px);
-  flex-direction: column;
-  overflow: hidden;
-  border: 2px solid rgba(255, 214, 0, 0.85);
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(20, 70, 200, 0.72) 0%, rgba(7, 27, 80, 0.92) 100%);
-  box-shadow: 0 10px 24px rgba(3, 12, 40, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.25);
-  scroll-snap-align: start;
-}
-
-/* ---------- Afiche (o tarjeta de color) ---------- */
-.actividad__media {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 5;
-  padding: 0;
-  overflow: hidden;
-  border: 0;
-  background: var(--marino);
-  color: #fff;
-  font: inherit;
-  cursor: pointer;
-}
-
-.actividad__media:focus-visible {
-  outline-offset: -4px;
-  outline-color: var(--amarillo);
-}
-
-.actividad__afiche {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-@media (hover: hover) {
-  .actividad__media:hover .actividad__afiche {
-    transform: scale(1.04);
-  }
-}
-
-/* Sin afiche: colores de la feria con confeti estático */
-.actividad__media--sin-afiche {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 1rem;
-  padding: 4.5rem 1.25rem 1.25rem;
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 3px, transparent 4px),
-    radial-gradient(circle, rgba(255, 214, 0, 0.7) 0 4px, transparent 5px),
-    linear-gradient(150deg, #FF2E9A, #7A0045);
-  background-size: 70px 80px, 110px 95px, auto;
-  background-position: 10px 15px, 45px 50px, 0 0;
-  cursor: default;
+  margin-top: 0.6rem;
+  pointer-events: none; /* solo la pastilla recibe toques */
 }
 
-.actividad__media--sin-afiche.actividad__media--tono-1 {
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 3px, transparent 4px),
-    radial-gradient(circle, rgba(0, 188, 235, 0.7) 0 4px, transparent 5px),
-    linear-gradient(150deg, var(--naranja), #A33A00);
-}
-
-.actividad__media--sin-afiche.actividad__media--tono-2 {
-  background-image:
-    radial-gradient(circle, rgba(255, 255, 255, 0.35) 0 3px, transparent 4px),
-    radial-gradient(circle, rgba(255, 214, 0, 0.7) 0 4px, transparent 5px),
-    linear-gradient(150deg, var(--celeste), var(--azul));
-}
-
-.actividad__arte-titulo {
-  font-family: var(--font-script);
-  font-size: clamp(2.2rem, 10vw, 2.8rem);
-  line-height: 1.1;
-  text-align: center;
-  text-shadow: 0 4px 0 rgba(3, 12, 40, 0.45);
-}
-
-.actividad__pronto {
-  padding: 0.4rem 1.1rem;
-  border: 2px solid var(--amarillo);
+.programa-filtro__lista {
+  display: flex;
+  gap: 0.35rem;
+  max-width: calc(100% - 24px);
+  padding: 5px;
+  overflow-x: auto;
+  transition: border-radius 0.25s ease, background-color 0.25s ease;
+  border: 1px solid rgba(255, 214, 0, 0.45);
   border-radius: 999px;
-  background: rgba(7, 27, 80, 0.55);
-  font-family: var(--font-display);
-  font-size: 1.1rem;
+  background: rgba(7, 27, 80, 0.92);
+  box-shadow: 0 10px 26px rgba(4, 13, 45, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  pointer-events: auto;
+  scroll-padding-inline: 5px;
+  scrollbar-width: none;
 }
 
-/* Calendario en la esquina */
-.actividad__fecha {
-  position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
-  display: flex;
-  flex-direction: column;
-  width: 58px;
-  overflow: hidden;
-  border: 2px solid var(--amarillo);
-  border-radius: 12px;
-  background: #fff;
-  box-shadow: 0 6px 16px rgba(3, 12, 40, 0.45);
-  color: var(--marino);
-  text-align: center;
-  line-height: 1;
-}
-
-.actividad__fecha-dia {
-  padding: 0.25rem 0 0.2rem;
-  background: linear-gradient(180deg, #FF2E9A, var(--fucsia));
-  color: #fff;
-  font-family: var(--font-display);
-  font-size: 0.85rem;
-  text-transform: uppercase;
-}
-
-.actividad__fecha-num {
-  padding-top: 0.25rem;
-  font-family: var(--font-timer);
-  font-size: 1.65rem;
-}
-
-.actividad__fecha-mes {
-  padding-bottom: 0.3rem;
-  color: var(--gris);
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-}
-
-/* ---------- Texto ---------- */
-.actividad__cuerpo {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 1rem 1.1rem 1.2rem;
-  text-align: center;
-}
-
-.actividad__titulo {
-  color: #fff;
-  font-size: 1.25rem;
-  text-shadow: 0 2px 0 var(--marino);
-}
-
-.actividad__datos {
-  color: var(--amarillo);
-  font-size: 0.95rem;
-  font-weight: 700;
-}
-
-.actividad__texto {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.95rem;
-}
-
-/* ---------- Flechas doradas (solo con ratón y pantallas anchas) ---------- */
-.actividades-flecha {
+.programa-filtro__lista::-webkit-scrollbar {
   display: none;
 }
 
-@media (hover: hover) and (min-width: 900px) {
-  .actividades-lista {
-    margin-inline: 0;
-    padding-inline: 0;
-    scroll-padding-inline: 0;
+.programa-filtro__boton {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0.35rem 0.95rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.programa-filtro__boton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.programa-filtro__boton[aria-pressed="true"] {
+  border-color: var(--oro);
+  background: var(--oro);
+  color: var(--tinta);
+}
+
+.programa-filtro__boton.is-pasado:not([aria-pressed="true"]) {
+  opacity: 0.55;
+}
+
+/* "Hoy" en el botón del día */
+.programa-filtro__hoy {
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--rosa);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.programa-filtro.is-fija .programa-filtro__lista {
+  flex: 1;
+  max-width: none;
+  padding-inline: var(--gutter);
+  border-width: 0 0 1px;
+  border-radius: 0;
+  box-shadow: 0 8px 20px rgba(4, 13, 45, 0.35);
+}
+
+@media (min-width: 720px) {
+  .programa-filtro.is-fija .programa-filtro__lista {
+    justify-content: center;
+  }
+}
+
+/* ---------- Días ---------- */
+.programa-contenido {
+  max-width: 1000px;
+  padding-block: 2.25rem 3.5rem;
+  scroll-margin-top: 70px;
+}
+
+.programa-dias {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.programa-dia__cabecera {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.9rem;
+  margin-bottom: 1.15rem;
+}
+
+/* Filete dorado hasta el borde */
+.programa-dia__cabecera::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  margin-bottom: 0.7rem;
+  background: linear-gradient(90deg, rgba(255, 201, 60, 0.65), transparent);
+}
+
+.programa-dia__titulo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  color: #fff;
+}
+
+.programa-dia__semana {
+  color: var(--oro);
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+
+.programa-dia__fecha {
+  font-family: var(--font-serif);
+  font-size: clamp(1.55rem, 6vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.programa-dia__hoy {
+  order: 2;
+  margin-bottom: 0.35rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  background: var(--rosa);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.programa-vacio {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+/* ---------- Tarjetas: una columna; dos desde 640 px ---------- */
+.act-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 640px) {
+  .act-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .actividades-flecha {
-    position: absolute;
-    /* Centro de las tarjetas: la lista tiene 0.5rem arriba y 1.5rem abajo */
-    top: calc(50% - 0.5rem);
-    translate: 0 -50%;
-    z-index: 2;
-    display: grid;
-    place-items: center;
-    width: 52px;
-    height: 52px;
-    padding: 0 0 4px;
-    border: 3px solid #fff;
-    border-radius: 50%;
-    background: linear-gradient(180deg, #FFE45C 0%, var(--amarillo) 45%, #FFA800 100%);
-    box-shadow: 0 4px 0 #B35A00, 0 10px 22px rgba(3, 12, 40, 0.45);
-    color: var(--marino);
-    font-size: 2rem;
-    line-height: 1;
-    cursor: pointer;
-    transition: opacity 0.2s ease;
+  /* Principales y las normales que quedarían solas en su fila */
+  .act-card--principal,
+  .act-card--ancha {
+    grid-column: 1 / -1;
+  }
+}
+
+.act-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 201, 60, 0.22);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.025));
+  transition: opacity 0.3s ease, border-color 0.2s ease;
+}
+
+.act-card__cuerpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.15rem 1.15rem;
+}
+
+.act-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.2rem;
+}
+
+.act-card__icono {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 201, 60, 0.55);
+  border-radius: 50%;
+  color: var(--oro);
+}
+
+.act-card__icono svg {
+  width: 19px;
+  height: 19px;
+}
+
+.act-card__hora {
+  color: var(--oro);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.act-card__estado {
+  margin-left: auto;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--oro);
+  border-radius: 999px;
+  color: var(--oro);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.act-card__titulo {
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Cursiva: algo más grande para leerse bien */
+.act-card__detalle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.12rem;
+  line-height: 1.4;
+}
+
+.act-card__enlace {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 0.35rem;
+  min-height: 44px;
+  color: var(--oro);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-underline-offset: 4px;
+}
+
+.act-card__enlace::after {
+  content: "›";
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+/* ---------- Actividades principales: con su banner del afiche ---------- */
+.act-card--principal {
+  border-color: rgba(255, 201, 60, 0.8);
+  background:
+    linear-gradient(135deg, rgba(255, 201, 60, 0.14), rgba(255, 255, 255, 0.03) 50%),
+    linear-gradient(180deg, rgba(20, 70, 200, 0.72) 0%, rgba(7, 27, 80, 0.92) 100%); /* recuadros del contador */
+  box-shadow: 0 0 0 4px rgba(255, 201, 60, 0.07), 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.act-card__media {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  border-bottom: 1px solid rgba(255, 201, 60, 0.6);
+  background: #020818;
+}
+
+.act-card__media img {
+  width: 100%;
+  height: auto;
+}
+
+.act-card__etiqueta {
+  color: var(--oro-claro);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.act-card--principal .act-card__icono {
+  border-color: var(--oro);
+  background: var(--oro);
+  color: var(--tinta);
+}
+
+.act-card--principal .act-card__titulo {
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 4.6vw, 1.55rem);
+  line-height: 1.25;
+}
+
+/* Foto casi cuadrada (la Flor de la Feria): alto limitado, se ve el rostro */
+.act-card--foto .act-card__media img {
+  height: min(78vw, 320px);
+  object-fit: cover;
+  object-position: 50% 15%;
+}
+
+/* Imágenes no tan anchas (desfile hípico, Banda Vega, altar): a un lado */
+@media (min-width: 900px) {
+  .act-card--foto .act-card__media img {
+    height: 100%;
+    min-height: 260px;
   }
 
-  .actividades-flecha--antes { left: -22px; }
-  .actividades-flecha--despues { right: -22px; }
-
-  .actividades-flecha:focus-visible {
-    outline-color: #fff;
+  .act-card--principal:not(.act-card--banner) {
+    flex-direction: row;
   }
 
-  .actividades-flecha:disabled {
-    opacity: 0;
-    pointer-events: none;
+  .act-card--principal:not(.act-card--banner) .act-card__media {
+    flex: 0 0 56%;
+    border-right: 1px solid rgba(255, 201, 60, 0.6);
+    border-bottom: 0;
+  }
+
+  .act-card--principal:not(.act-card--banner) .act-card__cuerpo {
+    justify-content: center;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .act-card--principal.act-card--foto:not(.act-card--banner) .act-card__media {
+    flex-basis: 38%;
+  }
+}
+
+/* ---------- Avance de hoy ----------
+ * Más específico que la aparición de js/escenas.js (opacity: 1). */
+.act-card.is-pasada,
+.escenas .act-card.is-pasada[data-revelar].is-revelado {
+  opacity: 0.5;
+}
+
+.act-card.is-ahora {
+  border-color: var(--rosa);
+  box-shadow: 0 0 0 1px var(--rosa), 0 0 30px rgba(255, 46, 154, 0.25);
+}
+
+.act-card.is-ahora .act-card__estado {
+  border-color: var(--rosa);
+  background: var(--rosa);
+  color: #fff;
+}
+
+/* ---------- Agradecimientos (estilo del final de "Nuestras reinas") ---------- */
+.programa-gracias {
+  position: relative;
+  isolation: isolate;
+  /* Arriba queda espacio para la iglesia de fuegos sobre el título */
+  padding-block: 6.5rem 4rem;
+  background:
+    radial-gradient(ellipse 70% 40% at 50% 0, rgba(255, 46, 154, 0.24), transparent 70%),
+    radial-gradient(ellipse 60% 35% at 100% 100%, rgba(255, 201, 60, 0.12), transparent 70%),
+    var(--noche);
+  color: #F7EAF3;
+  text-align: center;
+}
+
+.programa-gracias__titulo {
+  font-size: clamp(2.2rem, 1.5rem + 4vw, 3.4rem);
+}
+
+.programa-gracias .apoyo {
+  margin: 2.75rem auto 3rem;
+}
+
+.programa-gracias .apoyo__antes {
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.programa-gracias .apoyo__antes::before,
+.programa-gracias .apoyo__antes::after {
+  width: 18px;
+}
+
+.programa-gracias .apoyo__despues {
+  max-width: 26rem;
+  text-wrap: balance;
+}
+
+.programa-gracias__subtitulo {
+  justify-content: center;
+  margin: 2.75rem 0 1rem;
+  font-weight: 400;
+}
+
+.programa-gracias__nombres {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.35rem 2rem;
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.programa-gracias__nombres li {
+  font-size: clamp(1.4rem, 1rem + 1.4vw, 1.7rem);
+}
+
+@media (min-width: 640px) {
+  .programa-gracias__nombres {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 760px) {
+  .programa-gracias {
+    padding-top: 4.5rem;
+  }
+}
+
+@media (min-width: 960px) {
+  .programa-gracias__nombres {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Brillo dorado en el borde superior de las hojas que suben (js/escenas.js) */
+.escenas .programa-actividades.escena--entra::before,
+.escenas .programa-gracias.escena--entra::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 6;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--oro), var(--rosa), var(--oro), transparent);
+  pointer-events: none;
+}
+
+/* La cabecera no se oscurece al subir las actividades (sin el velo de js/escenas.js) */
+.programa-portada > .escena__velo {
+  display: none;
+}
+
+/* Franja arriba de la hoja de actividades para que se vea la curva sobre el filtro */
+.escenas .programa-actividades.escena--entra {
+  padding-top: 14px;
+}
+
+
+/* ---------- Figuras de neón (js/neon.js) ----------
+ * San Rafael y la iglesia en contorno de neón, flotando a los lados de
+ * las actividades. El brillo va dibujado en el lienzo (sin filtros CSS);
+ * solo se anima transform y se pausa cuando la sección no se ve. */
+.programa-contenido {
+  position: relative;
+  z-index: 1; /* el texto y las tarjetas, encima del neón */
+}
+
+.neon-capa {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.neon {
+  position: absolute;
+  width: var(--w);
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.neon.is-encendido {
+  opacity: 0.32; /* en teléfonos queda detrás de las tarjetas */
+}
+
+.neon--izq { left: -18px; }
+.neon--der { right: -18px; }
+
+/* Con margen a los lados: en el centro del margen, encendidas del todo */
+@media (min-width: 1180px) {
+  .neon.is-encendido { opacity: 0.95; }
+  .neon--izq { left: calc((100% - 1000px) / 4 - var(--w) / 2); }
+  .neon--der { right: calc((100% - 1000px) / 4 - var(--w) / 2); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .neon {
+    animation: neon-flotar 7s ease-in-out infinite;
+    animation-delay: calc(var(--i, 0) * -1.7s);
+    will-change: transform;
+  }
+
+  /* Al encenderse parpadea una vez, como un letrero de neón */
+  .neon.is-encendido {
+    animation:
+      neon-flotar 7s ease-in-out calc(var(--i, 0) * -1.7s) infinite,
+      neon-encender 0.9s steps(1, end) 1;
+  }
+
+  .escenas .escena.is-pausada .neon {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes neon-flotar {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-16px) rotate(2deg); }
+}
+
+@keyframes neon-encender {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  30%  { opacity: 0.1; }
+  45%  { opacity: 1; }
+  55%  { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+/* ---------- Fuegos pequeños (js/fuegos.js): detrás del texto ---------- */
+.fuegos-mini {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ---------- Aparición de los agradecimientos (una sola vez) ----------
+ * programa.js pone .anima-gracias y, al llegar a la pantalla, .is-visible.
+ * Solo transform, opacity y clip-path. */
+.anima-gracias .programa-gracias__titulo,
+.anima-gracias .apoyo__nombre {
+  clip-path: inset(-30% 100% -30% 0);
+  transition: clip-path 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.anima-gracias .programa-gracias__titulo.is-visible,
+.anima-gracias .apoyo.is-visible .apoyo__nombre {
+  clip-path: inset(-30% -10% -30% -10%);
+}
+
+.anima-gracias .apoyo {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.anima-gracias .apoyo__escudo-marco {
+  opacity: 0;
+  transform: scale(0.55) rotate(-8deg);
+  transition: opacity 0.6s ease 0.3s, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s;
+}
+
+.anima-gracias .apoyo__antes,
+.anima-gracias .apoyo__despues,
+.anima-gracias .programa-gracias__subtitulo {
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.anima-gracias .apoyo .apoyo__antes   { transition-delay: 0.55s; }
+.anima-gracias .apoyo .apoyo__nombre  { transition-delay: 0.75s; }
+.anima-gracias .apoyo .apoyo__despues { transition-delay: 1.2s; }
+
+.anima-gracias .apoyo__lugar {
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.5s ease 1.4s, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 1.4s;
+}
+
+.anima-gracias .programa-gracias__nombres li {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition-delay: calc(min(var(--i, 0), 14) * 70ms);
+}
+
+.anima-gracias .apoyo.is-visible,
+.anima-gracias .apoyo.is-visible .apoyo__escudo-marco,
+.anima-gracias .apoyo.is-visible .apoyo__antes,
+.anima-gracias .apoyo.is-visible .apoyo__despues,
+.anima-gracias .apoyo.is-visible .apoyo__lugar,
+.anima-gracias .programa-gracias__subtitulo.is-visible,
+.anima-gracias .programa-gracias__nombres.is-visible li {
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 960px) {
+  .programa-gracias__nombres {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -2666,7 +3617,7 @@ main {
 }
 
 /* La portada se aleja (js/escenas.js cambia su transform) */
-.escenas .hero__inner {
+.escenas [data-escena-contenido] {
   transform-origin: 50% 100%;
 }
 
@@ -2680,7 +3631,7 @@ main {
     animation-range: entry 0% entry 100%;
   }
 
-  .escenas--css .hero__inner {
+  .escenas--css [data-escena-contenido] {
     animation: escena-alejar linear both;
     animation-range: entry 0% entry 100%;
   }
@@ -2705,7 +3656,7 @@ main {
 
 /* Brillo dorado en el borde superior de la hoja de las Flores */
 .escenas .section--evento.escena--entra::before,
-.escenas .section--actividades.escena--entra::before,
+.escenas .section--cocode.escena--entra::before,
 .escenas .section--flores.escena--entra::before,
 .escenas .section--patrocinadores.escena--entra::before {
   content: "";
