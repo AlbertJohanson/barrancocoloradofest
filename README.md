@@ -115,6 +115,10 @@ Página propia con todas las actividades de la semana, tomada del programa ofici
 
 **Serenata a nuestras reinas:** lleva la foto de la Flor de la Feria (`assets/img/programa/flor-de-la-feria.webp`, recortada de su foto oficial) con la etiqueta "Nuestras reinas" en lugar de "Actividad principal" (campo `etiqueta`). Las fotos casi cuadradas se muestran con alto limitado y, en escritorio, más angostas que los banners.
 
+**Compartir:** en la cabecera, el botón **"Compartir programa"** abre el menú para compartir del teléfono (en computadoras sin ese menú, copia el enlace y avisa "¡Enlace copiado!"), y al lado **"Enviar por WhatsApp"** abre WhatsApp con el mensaje y el enlace ya escritos. El texto y el enlace están en `initCompartir()` de `programa.js`.
+
+**Vista previa al compartir:** `programa.html` tiene sus propias etiquetas Open Graph y Twitter con la imagen `assets/img/compartir/programa-2026.jpg` (1200 × 630: logo, "Programa oficial", fechas, actividades y San Rafael sobre la iglesia). Si se cambia, usar otro nombre de archivo (Facebook y WhatsApp guardan la anterior en caché).
+
 **Pie de página:** el mismo de la portada (logo, "Quiero ser patrocinador", redes, contacto y mapa), que arma `js/pie.js` en las dos páginas.
 
 - **Cabecera:** la foto de la iglesia de fondo (`assets/img/portada/iglesia.webp`) con una capa azul, "Programa oficial", las fechas (`programa.fechasTexto`) y **San Rafael Arcángel** en un arco dorado (recortado de la portada del programa: `assets/img/programa/san-rafael.webp`).

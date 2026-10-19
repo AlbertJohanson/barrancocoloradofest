@@ -521,6 +521,44 @@
       .forEach(function (node) { io.observe(node); });
   }
 
+  /**
+   * Botón "Compartir programa": abre el menú para compartir del teléfono
+   * (Web Share API); donde no existe, copia el enlace. Al lado, un enlace
+   * directo a WhatsApp con el mensaje ya escrito.
+   */
+  function initCompartir() {
+    var boton = document.querySelector("[data-compartir]");
+    if (!boton) return;
+    var aviso = document.querySelector("[data-compartir-aviso]");
+    var url = "https://barrancocoloradofest.com/programa.html";
+    var texto = "¡Ya está el programa oficial de la Feria Patronal Barranco Colorado 2026! Del 21 al 25 de octubre.";
+
+    var whatsapp = document.querySelector("[data-compartir-whatsapp]");
+    if (whatsapp) whatsapp.href = "https://wa.me/?text=" + encodeURIComponent(texto + " " + url);
+
+    function avisar(mensaje) {
+      aviso.textContent = mensaje;
+      setTimeout(function () { aviso.textContent = ""; }, 3000);
+    }
+
+    boton.addEventListener("click", function () {
+      if (navigator.share) {
+        navigator.share({ title: "Programa oficial · Feria Barranco Colorado 2026", text: texto, url: url })
+          .catch(function () {}); // la persona cerró el menú
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+          avisar("¡Enlace copiado! Pégalo donde quieras compartirlo.");
+        }, function () { avisar(url); });
+      } else {
+        avisar(url);
+      }
+    });
+  }
+
+  initCompartir();
+
   var pagina = document.querySelector("[data-programa-pagina]");
   if (pagina) {
     renderPagina(pagina);

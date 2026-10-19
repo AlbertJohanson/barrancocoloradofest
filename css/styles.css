@@ -2597,6 +2597,43 @@ a {
   font-size: 1.15rem;
 }
 
+/* Compartir el programa */
+.programa-compartir {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1rem;
+  margin-top: 0.4rem;
+}
+
+.programa-compartir__boton {
+  gap: 0.5rem;
+}
+
+.programa-compartir__whatsapp {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: #9DF5BC;
+  font-weight: 700;
+  text-underline-offset: 4px;
+}
+
+.programa-compartir__aviso {
+  flex-basis: 100%;
+  min-height: 1.4em;
+  color: var(--oro-claro);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  .programa-compartir {
+    justify-content: flex-start;
+  }
+}
+
 /* San Rafael en un arco con doble filete dorado */
 .programa-santo {
   order: -1;
