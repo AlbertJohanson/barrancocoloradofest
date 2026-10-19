@@ -240,8 +240,11 @@ window.FERIA_DATA = {
           {
             hora: "24:00",
             titulo: "Serenata al santo patrono San Rafael Arcángel",
+            imagen: { ruta: "assets/img/programa/san-rafael.webp", ancho: 470, alto: 840, alt: "Imagen de San Rafael Arcángel con su corona, el pez y el bastón" },
+            etiqueta: "Santo patrono",
             detalle: "En la iglesia católica.",
-            icono: "iglesia"
+            icono: "iglesia",
+            destacado: true
           }
         ]
       },

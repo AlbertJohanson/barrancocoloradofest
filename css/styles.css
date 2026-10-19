@@ -3110,9 +3110,16 @@ a {
 
 /* Imágenes no tan anchas (desfile hípico, Banda Vega, altar): a un lado */
 @media (min-width: 900px) {
+  /* La foto llena su columna sin estirar la tarjeta (fotos verticales) */
+  .act-card--foto .act-card__media {
+    position: relative;
+    min-height: 300px;
+  }
+
   .act-card--foto .act-card__media img {
+    position: absolute;
+    inset: 0;
     height: 100%;
-    min-height: 260px;
   }
 
   .act-card--principal:not(.act-card--banner) {
